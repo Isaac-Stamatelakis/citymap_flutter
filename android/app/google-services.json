@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "242020131627",
+    "project_id": "citymap-54d38",
+    "storage_bucket": "citymap-54d38.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242020131627:android:6b5b3954bebe7692ae1b6e",
+        "android_client_info": {
+          "package_name": "com.example.city_map"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "242020131627-f51h33nnfrboi2o2nf4nvaatqd7c11sm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDo_idohFhOXBsvIfI_AMJrfpPhf2S2uVI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "242020131627-f51h33nnfrboi2o2nf4nvaatqd7c11sm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242020131627:android:50480793ba1bb625ae1b6e",
+        "android_client_info": {
+          "package_name": "com.example.citymap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "242020131627-f51h33nnfrboi2o2nf4nvaatqd7c11sm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDo_idohFhOXBsvIfI_AMJrfpPhf2S2uVI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "242020131627-f51h33nnfrboi2o2nf4nvaatqd7c11sm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

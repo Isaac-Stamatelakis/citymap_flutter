@@ -1,10 +1,20 @@
 import 'package:city_map/consts/colors.dart';
+import 'package:city_map/consts/global_constants.dart';
 import 'package:city_map/management/management_fragment.dart';
 import 'package:city_map/map/map_fragment.dart';
 import 'package:city_map/task/task_fragment.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:city_map/firebase_options.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
 
-void main() {
+  // Can be replaced with other authentatior services
+  GlobalValues.user_id = "5e9e198fd2454634";
+  
   runApp(const MyApp());
 }
 
