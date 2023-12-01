@@ -1,9 +1,11 @@
+import 'package:city_map/consts/global_constants.dart';
 import 'package:city_map/consts/helper.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class TaskFragment extends StatelessWidget {
-  
-  const TaskFragment({super.key});
+class _TaskFragmentState extends State<TaskFragment> {
+  final CollectionReference users = FirebaseFirestore.instance.collection("Workers");
   @override
   Widget build(BuildContext context) {
     Size deviceSize = Helper.getDeviceSize(context);
@@ -37,13 +39,49 @@ class TaskFragment extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: ListView(children : List.generate(20, (index) =>  TaskContent(index))))
-        
-        
-      
-      
-        
+          child: PageView(
+            children: [
+              FutureBuilder(
+                future: users.doc(GlobalValues.user_id).get(), 
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    var userData = snapshot.data!.data() as Map<String, dynamic>;
+                    return Center(
+                      child: Text('User Name: ${userData['firstName']}'),
+                    );
+                  }
+                  }
+                )
+            ],
+          )  
+        )
       ],
+    );
+  }
+}
+
+class TaskFragment extends StatefulWidget {
+  const TaskFragment ({super.key});
+
+  @override
+  State<TaskFragment> createState() => _TaskFragmentState();
+
+}
+class TaskDisplay extends StatelessWidget {
+  final String title;
+  const TaskDisplay(this.title,{super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Text(title),
+        ListView(children : List.generate(20, (index) =>  TaskContent(index))),
+      ],
+
     );
   }
 }
