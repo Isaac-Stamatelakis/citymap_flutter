@@ -1,6 +1,8 @@
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/global_constants.dart';
 import 'package:city_map/consts/helper.dart';
+import 'package:city_map/task/site_task.dart';
+import 'package:city_map/task/site_task_list.dart';
 import 'package:city_map/worker/worker_group/worker_group.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,11 +10,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
 class _TaskFragmentState extends State<TaskFragment> {
+  WorkerGroup? _workerGroup;
   final CollectionReference users = FirebaseFirestore.instance.collection("Workers");
   @override
   Widget build(BuildContext context) {
-    WorkerGroup workerGroup = Provider.of<WorkerGroup>(context);
-    print(workerGroup.siteTaskIDs?.length);
+    _workerGroup = Provider.of<WorkerGroup>(context);
+    print(_workerGroup?.siteTaskIDs?.length);
     //print(workerGroup.dailySheetID);
     Size deviceSize = Helper.getDeviceSize(context);
     return Column(
@@ -23,7 +26,7 @@ class _TaskFragmentState extends State<TaskFragment> {
         
         AppBar(
           backgroundColor: CustomColors.coeBlue,
-          leading: Icon(Icons.ac_unit),
+          leading: Icon(Icons.agriculture, color: Colors.amber),
           title: Text("Task Fragment"),
           centerTitle: true,
         ),
@@ -73,9 +76,9 @@ class _TaskFragmentState extends State<TaskFragment> {
        Expanded(
         child: 
         PageView(
-          children: const [
-            TaskDisplay("Hello2"),
-            TaskDisplay("Yo")
+          children: [
+            SiteTaskDisplay(_workerGroup?.siteTaskIDs,"yoyo"),
+            const NeighborhoodDisplay("Yo")
           ],
         )  
        ) 
@@ -98,7 +101,7 @@ class TaskFragment extends StatefulWidget {
   State<TaskFragment> createState() => _TaskFragmentState();
 
 }
-class TaskDisplay extends StatelessWidget {
+abstract class TaskDisplay extends StatelessWidget {
   final String title;
   const TaskDisplay(this.title,{super.key});
   @override
@@ -106,21 +109,40 @@ class TaskDisplay extends StatelessWidget {
     return Column(
       children: [
         Text(title),
-        Expanded(
-          child: ListView.separated(
-            shrinkWrap: true,
-            itemCount: 10,
-            separatorBuilder: (_,__) => const SizedBox(),
-            itemBuilder: (context,int index) {
-                return TaskContent(index);
-            } 
-          )
-        )
-        
+        _getListWidget()
       ],
-
     );
   }
+  Widget _getListWidget();
+}
+class NeighborhoodDisplay extends TaskDisplay {
+  const NeighborhoodDisplay(super.title,{super.key});
+  @override
+  Widget _getListWidget() {
+    return Text("THIS WILL BE SOMETHING EVENTUALLY!");
+  }
+
+}
+
+class SiteTaskDisplay extends TaskDisplay {
+  final List<String>? _ids;
+  const SiteTaskDisplay(this._ids,super.title,{super.key});
+  @override
+  Widget _getListWidget() {
+    return FutureBuilder(
+          future: SiteTaskMultiRetriever(_ids).fromDatabase(), 
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text("Error: ${snapshot.error}");
+            } else {
+              return SiteTaskDisplayList(snapshot.data);
+            }
+          }
+      );
+  }
+
 }
 
 class TaskContent extends StatelessWidget {

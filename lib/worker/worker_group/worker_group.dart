@@ -36,7 +36,6 @@ class WorkerGroupDatabaseHelper extends DatabaseHelper {
   @override
   WorkerGroup? fromDocument(DocumentSnapshot<Object?> snapshot) {
     var snapshotData = snapshot.data() as Map<String, dynamic>; //snapshotData["siteTasks"]
-
     return WorkerGroup(
       snapshotData["dailySheet"], 
       snapshotData["driverSheet"], 
