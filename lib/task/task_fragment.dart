@@ -3,6 +3,7 @@ import 'package:city_map/consts/global_constants.dart';
 import 'package:city_map/consts/helper.dart';
 import 'package:city_map/task/site_task.dart';
 import 'package:city_map/task/site_task_list.dart';
+import 'package:city_map/worker/worker.dart';
 import 'package:city_map/worker/worker_group/worker_group.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,13 +11,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
 class _TaskFragmentState extends State<TaskFragment> {
-  WorkerGroup? _workerGroup;
   final CollectionReference users = FirebaseFirestore.instance.collection("Workers");
+  
   @override
   Widget build(BuildContext context) {
-    _workerGroup = Provider.of<WorkerGroup>(context);
-    print(_workerGroup?.siteTaskIDs?.length);
-    //print(workerGroup.dailySheetID);
     Size deviceSize = Helper.getDeviceSize(context);
     return Column(
       
@@ -73,11 +71,11 @@ class _TaskFragmentState extends State<TaskFragment> {
           height: 20,
         ),
         
-       Expanded(
+       Expanded(  
         child: 
         PageView(
           children: [
-            SiteTaskDisplay(_workerGroup?.siteTaskIDs,"yoyo"),
+            SiteTaskDisplay(Provider.of<WorkerGroup>(context).siteTaskIDs,"yoyo"),
             const NeighborhoodDisplay("Yo")
           ],
         )  

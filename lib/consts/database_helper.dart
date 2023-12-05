@@ -12,7 +12,7 @@ abstract class DatabaseHelper {
         return null;
       }
     } catch (e) {
-      Logger().e('Error retrieving workerGroupID: $e');
+      Logger().e('Error retrieving from database: $e');
       return null;
     }
   }

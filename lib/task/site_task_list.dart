@@ -6,6 +6,7 @@ class SiteTaskDisplayList extends StatelessWidget {
   const SiteTaskDisplayList(this.siteTasks,{super.key});
   @override
   Widget build(BuildContext context) {
+    print(siteTasks?.length);
     return 
       Expanded(
         child: ListView.separated(

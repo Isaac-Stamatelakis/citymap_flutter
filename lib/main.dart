@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
   
   final List<Widget> _fragments = [];
 
-
+  
 
   void _buildFragments(BuildContext context) {  
     _fragments.addAll(
@@ -115,13 +115,11 @@ class _MyHomePageState extends State<MyHomePage> {
           } else if (snapshot.hasError) {
             return Text("Error: ${snapshot.error}");
           } else {
-            return
-              ChangeNotifierProvider(
-              create: (context) => snapshot.data,
+            return ChangeNotifierProvider.value(
+              value: snapshot.data,
               child: const TaskFragment(),
             );
-          }
-          
+          } 
         }
         ),
         const ManagementFragment(),

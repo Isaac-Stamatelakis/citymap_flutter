@@ -59,6 +59,7 @@ class SiteTaskMultiRetriever {
     for (String id in _ids!) {
       siteTasks.add(await SiteTaskDatabaseHelper(id).fromDatabase());
     }
+    print(siteTasks.length);
     return siteTasks;
   }
 }
