@@ -23,40 +23,34 @@ class SiteTaskDisplayList extends StatelessWidget {
 }
 
 class TaskContent extends StatelessWidget {
-  final SiteTask siteTask;
-  const TaskContent(this.siteTask, {super.key});
+  final SiteTask _siteTask;
+  const TaskContent(this._siteTask, {super.key});
   @override
   Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          print("Hello");
-          showDialog(
-            context: context, 
-            builder: (BuildContext context) => SiteTaskDialog()
-          );
-        },
-        child: Container(
+    return
+        Container(
           color: Colors.blueAccent,
-          child: ListTile(
-            leading: const Icon(Icons.agriculture),
-            title: Text(siteTask.number.toString()),
-            subtitle: Text(siteTask.description),
-            trailing: _getTrailingIcon(),
-            onTap: () {
-              print(true);
-            },
-            
-          ),
-        )
-        
-      )
+          child: GestureDetector(
+            child: ListTile(
+              leading: const Icon(Icons.agriculture),
+              title: Text(_siteTask.number.toString()),
+              subtitle: Text(_siteTask.description),
+              trailing: _getTrailingIcon(),
+              onTap: () {
+                showDialog(
+                  context: context, 
+                  builder: (BuildContext context) {
+                    return SiteTaskDialog(_siteTask);
+                  }
+                );
+              }
+          )
+        ),
     );
     
     
   }
   Icon _getTrailingIcon() {
-    return  siteTask.completed ? const Icon(Icons.check, color: Colors.green) : const Icon(Icons.close, color: Colors.red);
+    return _siteTask.completed ? const Icon(Icons.check, color: Colors.green) : const Icon(Icons.close, color: Colors.red);
   }
 }

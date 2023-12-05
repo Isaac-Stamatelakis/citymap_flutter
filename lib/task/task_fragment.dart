@@ -85,8 +85,8 @@ class _TaskFragmentState extends State<TaskFragment> {
         child: 
         PageView(
           children: [
-            SiteTaskDisplay(Provider.of<WorkerGroup>(context).siteTaskIDs,"yoyo"),
-            const NeighborhoodDisplay("Yo")
+            SiteTaskDisplay(Provider.of<WorkerGroup>(context).siteTaskIDs,"Tasks"),
+            const NeighborhoodDisplay("Areas")
           ],
         )  
        ) 
@@ -120,7 +120,18 @@ abstract class TaskDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(title),
+        AppBar(
+          backgroundColor: CustomColors.niceGrey,
+          title: Center(
+            child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: CustomColors.antiflashWhite
+              ),
+            )
+          )
+        ),
         _getListWidget()
       ],
     );

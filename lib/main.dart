@@ -150,9 +150,9 @@ class _MyHomePageState extends State<MyHomePage> {
         unselectedItemColor: CustomColors.niceGrey,
         currentIndex: _currentIndex,
         items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.map), label: "Map"),
-        BottomNavigationBarItem(icon: Icon(Icons.view_list), label: 'Tasks'),
-        BottomNavigationBarItem(icon: Icon(Icons.manage_accounts_rounded), label: "Management")
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: "Map"),
+          BottomNavigationBarItem(icon: Icon(Icons.view_list), label: 'Tasks'),
+          BottomNavigationBarItem(icon: Icon(Icons.manage_accounts_rounded), label: "Management")
         ],
         onTap: (index) {
           setState(() {
