@@ -1,8 +1,10 @@
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/global_constants.dart';
 import 'package:city_map/consts/helper.dart';
-import 'package:city_map/task/site_task.dart';
-import 'package:city_map/task/site_task_list.dart';
+import 'package:city_map/task/site_task/site_task.dart';
+import 'package:city_map/task/site_task/site_task_list.dart';
+import 'package:city_map/task/task_dialogs/daily_sheet_dialog.dart';
+import 'package:city_map/task/task_dialogs/driver_sheet_dialog.dart';
 import 'package:city_map/worker/worker.dart';
 import 'package:city_map/worker/worker_group/worker_group.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +12,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
+
+class TaskFragment extends StatefulWidget {
+  const TaskFragment ({super.key});
+
+  @override
+  State<TaskFragment> createState() => _TaskFragmentState();
+
+}
+
 class _TaskFragmentState extends State<TaskFragment> {
   final CollectionReference users = FirebaseFirestore.instance.collection("Workers");
-  
   @override
   Widget build(BuildContext context) {
     Size deviceSize = Helper.getDeviceSize(context);
@@ -85,20 +95,24 @@ class _TaskFragmentState extends State<TaskFragment> {
   }
 
   void _driverButtonPress() {
-
+    showDialog(
+      context: context, 
+      builder: (BuildContext context) {
+        return const DriverSheetDialog();
+      }
+    );
   }
   void _dailyButtonPress() {
-
+    showDialog(
+      context: context, 
+      builder: (BuildContext context) {
+        return const DailySheetDialog();
+      }
+    );
   }
 }
 
-class TaskFragment extends StatefulWidget {
-  const TaskFragment ({super.key});
-
-  @override
-  State<TaskFragment> createState() => _TaskFragmentState();
-
-}
+/// a widget which can be displayed on a page in TaskFragment
 abstract class TaskDisplay extends StatelessWidget {
   final String title;
   const TaskDisplay(this.title,{super.key});
@@ -113,6 +127,8 @@ abstract class TaskDisplay extends StatelessWidget {
   }
   Widget _getListWidget();
 }
+
+// Neighborhood Display for task fragment
 class NeighborhoodDisplay extends TaskDisplay {
   const NeighborhoodDisplay(super.title,{super.key});
   @override
@@ -122,6 +138,7 @@ class NeighborhoodDisplay extends TaskDisplay {
 
 }
 
+// SiteTaskDisplay 
 class SiteTaskDisplay extends TaskDisplay {
   final List<String>? _ids;
   const SiteTaskDisplay(this._ids,super.title,{super.key});
@@ -159,3 +176,5 @@ class TaskContent extends StatelessWidget {
     );
   }
 }
+
+

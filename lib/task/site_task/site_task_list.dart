@@ -1,4 +1,5 @@
-import 'package:city_map/task/site_task.dart';
+import 'package:city_map/task/site_task/site_task.dart';
+import 'package:city_map/task/site_task/site_task_dialog.dart';
 import 'package:flutter/material.dart';
 
 class SiteTaskDisplayList extends StatelessWidget {
@@ -26,15 +27,34 @@ class TaskContent extends StatelessWidget {
   const TaskContent(this.siteTask, {super.key});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.blueAccent,
-      child: ListTile(
-        leading: const Icon(Icons.agriculture),
-        title: Text(siteTask.number.toString()),
-        subtitle: Text(siteTask.description),
-        trailing: _getTrailingIcon(),
-      ),
+    return IgnorePointer(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          print("Hello");
+          showDialog(
+            context: context, 
+            builder: (BuildContext context) => SiteTaskDialog()
+          );
+        },
+        child: Container(
+          color: Colors.blueAccent,
+          child: ListTile(
+            leading: const Icon(Icons.agriculture),
+            title: Text(siteTask.number.toString()),
+            subtitle: Text(siteTask.description),
+            trailing: _getTrailingIcon(),
+            onTap: () {
+              print(true);
+            },
+            
+          ),
+        )
+        
+      )
     );
+    
+    
   }
   Icon _getTrailingIcon() {
     return  siteTask.completed ? const Icon(Icons.check, color: Colors.green) : const Icon(Icons.close, color: Colors.red);
