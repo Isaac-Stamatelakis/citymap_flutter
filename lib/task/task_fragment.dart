@@ -34,10 +34,16 @@ class _TaskFragmentState extends State<TaskFragment> {
         
         AppBar(
           backgroundColor: CustomColors.coeBlue,
-          leading: Icon(Icons.agriculture, color: Colors.amber),
+          leading: Builder(builder: (BuildContext context) {
+            return IconButton(onPressed: (){
+                Scaffold.of(context).openDrawer();
+              }, 
+              icon: Icon(Icons.menu));
+            },
+          ),
           title: Text("Task Fragment"),
           centerTitle: true,
-        ),
+        ),       
         const SizedBox(
           height: 20,
         ),
@@ -80,16 +86,15 @@ class _TaskFragmentState extends State<TaskFragment> {
         const SizedBox(
           height: 20,
         ),
-        
-       Expanded(  
-        child: 
-        PageView(
-          children: [
-            SiteTaskDisplay(Provider.of<WorkerGroup>(context).siteTaskIDs,"Tasks"),
-            const NeighborhoodDisplay("Areas")
-          ],
-        )  
-       ) 
+        Expanded(  
+          child: 
+          PageView(
+            children: [
+              SiteTaskDisplay(Provider.of<WorkerGroup>(context).siteTaskIDs,"Tasks"),
+              const NeighborhoodDisplay("Areas")
+            ],
+          )  
+        ) 
       ],
     );
   }
@@ -163,7 +168,7 @@ class SiteTaskDisplay extends TaskDisplay {
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
             } else {
-              return SiteTaskDisplayList(snapshot.data);
+              return Row(children: [ SiteTaskDisplayList(snapshot.data), SiteTaskDisplayList(snapshot.data)]);
             }
           }
       );

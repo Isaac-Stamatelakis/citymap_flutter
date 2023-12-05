@@ -160,6 +160,15 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         }
       ),
+      drawer: const Drawer(
+        child:  Column(
+          children: [
+            ListTile(title: Text("Sites"),tileColor: CustomColors.coeBlue),
+            ListTile(title: Text("Areas"),tileColor: CustomColors.coeBlue),
+            ListTile(title: Text("Profile"),tileColor: CustomColors.coeBlue)
+          ],
+        )
+      ),
     );
   }
 }
