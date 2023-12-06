@@ -121,8 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
             );
           } 
         }
-        ),
-        const ManagementFragment(),
+        )
       ]
     );
   }
@@ -152,7 +151,6 @@ class _MyHomePageState extends State<MyHomePage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.map), label: "Map"),
           BottomNavigationBarItem(icon: Icon(Icons.view_list), label: 'Tasks'),
-          BottomNavigationBarItem(icon: Icon(Icons.manage_accounts_rounded), label: "Management")
         ],
         onTap: (index) {
           setState(() {
@@ -163,9 +161,9 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: const Drawer(
         child:  Column(
           children: [
-            ListTile(title: Text("Sites"),tileColor: CustomColors.coeBlue),
             ListTile(title: Text("Areas"),tileColor: CustomColors.coeBlue),
-            ListTile(title: Text("Profile"),tileColor: CustomColors.coeBlue)
+            ListTile(title: Text("Profile"),tileColor: CustomColors.coeBlue),
+            ListTile(title: Text("Management"),tileColor: CustomColors.coeBlue)
           ],
         )
       ),

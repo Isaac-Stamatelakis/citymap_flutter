@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:city_map/consts/database_helper.dart';
+import 'package:city_map/database/database_helper.dart';
 import 'package:city_map/consts/global_constants.dart';
 import 'package:city_map/task/task.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,47 +19,91 @@ class SiteTask implements Task {
   String _siteType; String get siteType => this._siteType; set siteType(String value) => this._siteType = value;
   double _squareMeters; double get squareMeters => this._squareMeters; set squareMeters(double value) => this._squareMeters = value;
   String _dbID; String get dbID => this._dbID; set dbID(String value) => this._dbID = value;
-  String _areaID; String get areaID => this._areaID; set areaID(String value) => this._areaID = value;
-
-
-  
+   String _areaID; set areaID(String value) => this._areaID = value;  String get areaID => this._areaID; 
 }
-
-class SiteTaskDatabaseHelper extends DatabaseHelper {
-  final String _id;
-  SiteTaskDatabaseHelper(this._id);
-  @override
-  SiteTask fromDocument(DocumentSnapshot<Object?> snapshot) {
-    var snapshotData = snapshot.data() as Map<String, dynamic>; //snapshotData["siteTasks"]
-    return SiteTask(
-      snapshotData['bedAmount'], 
-      snapshotData['completed'], 
-      snapshotData['completedBy'], 
-      snapshotData['description'], 
-      snapshotData['number'], 
-      snapshotData['primaryLocation'], 
-      snapshotData['siteType'], 
-      snapshotData['squareMeters'], 
-      snapshotData['area'], 
-      snapshot.id
-    );
+/// ASiteTasks have a managerID which overrides the manager of the areaID
+class ASiteTask extends SiteTask {
+  String _managerID;
+  ASiteTask(this._managerID,super.bedAmount, super.completed, super.completedBy, super.description, super.number, super.primaryLocation, super.siteType, super.squareMeters, super.areaID, super.dbID); String get managerID => this._managerID; set managerID(String value) => this._managerID = value;
+}
+/// BSiteTasks have an area, and that area is managed by a manager
+class BSiteTask extends SiteTask {
+  BSiteTask(super.bedAmount, super.completed, super.completedBy, super.description, super.number, super.primaryLocation, super.siteType, super.squareMeters, super.areaID, super.dbID);
+}
+class SiteTaskFactory {
+  static SiteTask? fromDocument(DocumentSnapshot<Object?> snapshot) {
+    var snapshotData = snapshot.data() as Map<String, dynamic>;
+    String siteType = snapshotData['siteType'];
+    if (siteType == "A") {
+      return ASiteTask(
+        snapshotData['manager_id'],
+        snapshotData['bedAmount'], 
+        snapshotData['completed'], 
+        snapshotData['completedBy'], 
+        snapshotData['description'], 
+        snapshotData['number'], 
+        snapshotData['primaryLocation'], 
+        siteType, 
+        snapshotData['squareMeters'], 
+        snapshotData['area'], 
+        snapshot.id
+      );
+    } else if (siteType == "B") {
+      return BSiteTask(
+        snapshotData['bedAmount'], 
+        snapshotData['completed'], 
+        snapshotData['completedBy'], 
+        snapshotData['description'], 
+        snapshotData['number'], 
+        snapshotData['primaryLocation'], 
+        siteType, 
+        snapshotData['squareMeters'], 
+        snapshotData['area'], 
+        snapshot.id
+      );
+    } else {
+      // TODO put error
+      return null;
+    }
   }
-
+}
+/// Retrieves SiteTask with given id
+class SiteTaskDatabaseRetriever extends DatabaseRetriever {
+  SiteTaskDatabaseRetriever(super.id);
+  @override
+  SiteTask? fromDocument(DocumentSnapshot<Object?> snapshot) {
+    return SiteTaskFactory.fromDocument(snapshot);
+  }
   @override
   dynamic getDatabaseReference() {
-    return FirebaseFirestore.instance.collection("Sites").doc(_id);
+    return FirebaseFirestore.instance.collection("Sites").doc(super.id);
   }
 }
 
-class SiteTaskMultiRetriever {
-  final List<String>? _ids;
-  SiteTaskMultiRetriever(this._ids);
-  Future<List<SiteTask>> fromDatabase() async {
-    List<SiteTask> siteTasks = [];
-    for (String id in _ids!) {
-      siteTasks.add(await SiteTaskDatabaseHelper(id).fromDatabase());
-    }
-    print(siteTasks.length);
-    return siteTasks;
+/// Retrieves multi sitetasks in ids
+class SiteTaskMultiRetriever extends MultiDatabaseRetriever {
+  SiteTaskMultiRetriever(super.ids);
+  
+  @override
+  DatabaseRetriever getRetriever(String id) {
+    return SiteTaskDatabaseRetriever(id);
   }
 }
+
+/// Retrieves areas with given _areaID
+class SiteTaskAreaQuery extends DatabaseQuery {
+  final String _areaID;
+
+  SiteTaskAreaQuery(this._areaID);
+  @override
+  fromDocument(DocumentSnapshot<Object?> snapshot) {
+    return SiteTaskFactory.fromDocument(snapshot);
+  }
+
+  @override
+  getQuery() {
+    return FirebaseFirestore.instance.collection("Sites").where("area",isEqualTo:_areaID);
+  }
+
+}
+

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 class SiteTaskDialog extends StatelessWidget {
   final SiteTask _siteTask;
   const SiteTaskDialog(this._siteTask,{super.key});
-  
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -28,15 +27,18 @@ class SiteTaskDialog extends StatelessWidget {
           SiteTaskDialogTile("Square Meters: ${_siteTask.squareMeters}"),
           SiteTaskDialogTile("Number of Beds: ${_siteTask.bedAmount}"),
           FutureBuilder(
-            future: AreaDatabaseHelper(_siteTask.areaID).fromDatabase(), 
+            future: (_siteTask.areaID != "") ? AreaDatabaseRetriever(_siteTask.areaID).fromDatabase() : Future(() => null),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
               } else if (snapshot.hasError) {
                 return Text("Error: ${snapshot.error}");
               } else {
-                Area area = snapshot.data;
-                return SiteTaskDialogTile("Area: ${area.name}");
+                if (snapshot.hasData) {
+                  Area area = snapshot.data;
+                  return SiteTaskDialogTile("Area: ${area.name}");
+                }
+                return Container();
               }
             }
           ),
@@ -61,6 +63,7 @@ class SiteTaskDialog extends StatelessWidget {
       ),
     );
   }
+  
 }
 
 class SiteTaskDialogTile extends StatelessWidget {

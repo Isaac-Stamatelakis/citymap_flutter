@@ -1,5 +1,6 @@
-import 'package:city_map/consts/database_helper.dart';
+
 import 'package:city_map/consts/global_constants.dart';
+import 'package:city_map/database/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';

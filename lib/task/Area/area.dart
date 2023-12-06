@@ -1,4 +1,4 @@
-import 'package:city_map/consts/database_helper.dart';
+import 'package:city_map/database/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -10,9 +10,8 @@ class Area {
   
 }
 
-class AreaDatabaseHelper extends DatabaseHelper {
-  AreaDatabaseHelper(this._id);
-  String? _id;
+class AreaDatabaseRetriever extends DatabaseRetriever {
+  AreaDatabaseRetriever(super.id);
   @override
   Area? fromDocument(DocumentSnapshot<Object?> snapshot) {
     var snapshotData = snapshot.data() as Map<String, dynamic>;
@@ -21,7 +20,18 @@ class AreaDatabaseHelper extends DatabaseHelper {
 
   @override
   dynamic getDatabaseReference() {
-    return FirebaseFirestore.instance.collection("Areas").doc(_id);
+    return FirebaseFirestore.instance.collection("Areas").doc(super.id);
+  }
+
+}
+
+
+class AreaMultiDatabaseRetriever extends MultiDatabaseRetriever {
+  AreaMultiDatabaseRetriever(super.ids);
+
+  @override
+  DatabaseRetriever getRetriever(String id) {
+    return AreaDatabaseRetriever(id);
   }
 
 }

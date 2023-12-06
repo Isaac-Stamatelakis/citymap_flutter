@@ -1,6 +1,8 @@
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/global_constants.dart';
 import 'package:city_map/consts/helper.dart';
+import 'package:city_map/task/Area/area.dart';
+import 'package:city_map/task/Area/area_display_list.dart';
 import 'package:city_map/task/site_task/site_task.dart';
 import 'package:city_map/task/site_task/site_task_list.dart';
 import 'package:city_map/task/task_dialogs/daily_sheet_dialog.dart';
@@ -86,15 +88,14 @@ class _TaskFragmentState extends State<TaskFragment> {
         const SizedBox(
           height: 20,
         ),
-        Expanded(  
-          child: 
-          PageView(
+        Expanded(
+          child: Row(
             children: [
-              SiteTaskDisplay(Provider.of<WorkerGroup>(context).siteTaskIDs,"Tasks"),
-              const NeighborhoodDisplay("Areas")
-            ],
+              Expanded(child: SiteTaskDisplay(Provider.of<WorkerGroup>(context).siteTaskIDs,"Assigned Tasks")),
+              Expanded(child: NeighborhoodDisplay(Provider.of<WorkerGroup>(context).areaIDs,"Assigned Areas"))
+            ]
           )  
-        ) 
+        )
       ],
     );
   }
@@ -125,19 +126,27 @@ abstract class TaskDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        AppBar(
-          backgroundColor: CustomColors.niceGrey,
-          title: Center(
-            child: Text(
+        Container(
+          alignment: Alignment.center,
+          width: Helper.getDeviceSize(context).width*0.2,
+          height: 30,
+          decoration: BoxDecoration(
+            color: Colors.blue, // background color of the card
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
             title,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              color: CustomColors.antiflashWhite
-              ),
+              fontSize: 20
+            ),
             )
-          )
         ),
-        _getListWidget()
+        const SizedBox(
+          height: 30,
+        ),
+        _getListWidget(),
+        
       ],
     );
   }
@@ -146,10 +155,22 @@ abstract class TaskDisplay extends StatelessWidget {
 
 // Neighborhood Display for task fragment
 class NeighborhoodDisplay extends TaskDisplay {
-  const NeighborhoodDisplay(super.title,{super.key});
+  final List<String>? _ids;
+  const NeighborhoodDisplay(this._ids,super.title,{super.key});
   @override
   Widget _getListWidget() {
-    return Text("THIS WILL BE SOMETHING EVENTUALLY!");
+    return FutureBuilder(
+          future: AreaMultiDatabaseRetriever(_ids).fromDatabase(), 
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text("Error: ${snapshot.error}");
+            } else {
+              return AreaDisplayList(snapshot.data?.cast<Area>());
+            }
+          }
+      );
   }
 
 }
@@ -168,7 +189,7 @@ class SiteTaskDisplay extends TaskDisplay {
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
             } else {
-              return Row(children: [ SiteTaskDisplayList(snapshot.data), SiteTaskDisplayList(snapshot.data)]);
+              return SiteTaskDisplayList(snapshot.data?.cast<SiteTask>());
             }
           }
       );

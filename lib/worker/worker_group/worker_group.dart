@@ -1,14 +1,15 @@
-import 'package:city_map/consts/database_helper.dart';
+import 'package:city_map/database/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class WorkerGroup extends ChangeNotifier {
-  WorkerGroup(this.dailySheetID,this.driverSheetID,this.driverID,this.managerID,this.siteTaskIDs);
+  WorkerGroup(this.dailySheetID,this.driverSheetID,this.driverID,this.managerID,this.siteTaskIDs,this.areaIDs);
   String? dailySheetID;
   String? driverSheetID;
   String? driverID;
   String? managerID;
   List<String>? siteTaskIDs;
+  List<String>? areaIDs; List<String>? get getAreaIDs => this.areaIDs; set setAreaIDs(List<String>? areaIDs) => this.areaIDs = areaIDs;
   String? get getDailySheetID => this.dailySheetID;
 
   set setDailySheetID(String? dailySheetID) => this.dailySheetID = dailySheetID;
@@ -30,9 +31,8 @@ class WorkerGroup extends ChangeNotifier {
   set setSiteTaskIDs( siteTaskIDs) => this.siteTaskIDs = siteTaskIDs;
 }
 
-class WorkerGroupDatabaseHelper extends DatabaseHelper {
-  final String _id;
-  WorkerGroupDatabaseHelper(this._id);
+class WorkerGroupDatabaseHelper extends DatabaseRetriever {
+  WorkerGroupDatabaseHelper(super.id);
   @override
   WorkerGroup? fromDocument(DocumentSnapshot<Object?> snapshot) {
     var snapshotData = snapshot.data() as Map<String, dynamic>; //snapshotData["siteTasks"]
@@ -41,13 +41,14 @@ class WorkerGroupDatabaseHelper extends DatabaseHelper {
       snapshotData["driverSheet"], 
       snapshotData["driver_id"], 
       snapshotData["manager_id"],
-      (snapshotData["siteTasks"] as List).map((item) => item as String).toList()
+      (snapshotData["siteTasks"] as List).map((item) => item as String).toList(),
+      (snapshotData["areas"] as List).map((item) => item as String).toList()
     );
   }
 
   @override
   dynamic getDatabaseReference() {
-    return FirebaseFirestore.instance.collection("WorkerGroups").doc(_id);
+    return FirebaseFirestore.instance.collection("WorkerGroups").doc(super.id);
   }
   
   
