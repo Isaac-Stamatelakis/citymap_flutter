@@ -1,11 +1,19 @@
+import 'dart:html';
+import 'dart:js';
+import 'dart:ui';
+
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/global_constants.dart';
 import 'package:city_map/management/management_fragment.dart';
 import 'package:city_map/map/map_fragment.dart';
 import 'package:city_map/task/task_fragment.dart';
+import 'package:city_map/worker/worker.dart';
+import 'package:city_map/worker/worker_group/worker_group.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:city_map/firebase_options.dart';
+import 'package:provider/provider.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -14,8 +22,14 @@ void main() async {
 
   // Can be replaced with other authentatior services
   GlobalValues.user_id = "5e9e198fd2454634";
-  
-  runApp(const MyApp());
+  Worker? worker = await WorkerDatabaseHelper().fromDatabase();
+  print(worker?.firstName);
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => worker,
+      child: const MyApp(),
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -25,6 +39,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scrollBehavior: AppScrollBehavior(),
       title: 'Flutter Demo',
       /*
       builder: (context, child) {
@@ -57,6 +72,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class AppScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
+}
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -76,14 +99,42 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Widget> _fragments = const [
-    MapFragment(),
-    TaskFragment(),
-    ManagementFragment()
-  ];
+  
+  final List<Widget> _fragments = [];
+
+  
+
+  void _buildFragments(BuildContext context) {  
+    _fragments.addAll(
+      [
+        const MapFragment(),
+        FutureBuilder(future: _retrieveWorkerGroup(context),
+        builder: (context,snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text("Error: ${snapshot.error}");
+          } else {
+            return ChangeNotifierProvider.value(
+              value: snapshot.data,
+              child: const TaskFragment(),
+            );
+          } 
+        }
+        )
+      ]
+    );
+  }
+
+  Future<WorkerGroup> _retrieveWorkerGroup(BuildContext context) async {
+     Worker worker = Provider.of<Worker>(context);
+     return await WorkerGroupDatabaseHelper(worker.groupID).fromDatabase();
+  }
   int _currentIndex = 1;
   @override
   Widget build(BuildContext context) {
+    //_retriveInformation(context);
+    _buildFragments(context);
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -98,15 +149,23 @@ class _MyHomePageState extends State<MyHomePage> {
         unselectedItemColor: CustomColors.niceGrey,
         currentIndex: _currentIndex,
         items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.map), label: "Map"),
-        BottomNavigationBarItem(icon: Icon(Icons.view_list), label: 'Tasks'),
-        BottomNavigationBarItem(icon: Icon(Icons.manage_accounts_rounded), label: "Management")
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: "Map"),
+          BottomNavigationBarItem(icon: Icon(Icons.view_list), label: 'Tasks'),
         ],
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
         }
+      ),
+      drawer: const Drawer(
+        child:  Column(
+          children: [
+            ListTile(title: Text("Areas"),tileColor: CustomColors.coeBlue),
+            ListTile(title: Text("Profile"),tileColor: CustomColors.coeBlue),
+            ListTile(title: Text("Management"),tileColor: CustomColors.coeBlue)
+          ],
+        )
       ),
     );
   }
