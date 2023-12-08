@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:html';
 import 'dart:math';
 
 import 'package:city_map/database/database_helper.dart';
 import 'package:city_map/consts/global_constants.dart';
+import 'package:city_map/task/site_task/site_task_dialog.dart';
 import 'package:city_map/task/task.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 /// Represents a Site
 class SiteTask implements Task {
@@ -90,11 +93,11 @@ class SiteTaskMultiRetriever extends MultiDatabaseRetriever {
   }
 }
 
-/// Retrieves areas with given _areaID
+/// Retrieves siteTask with given _areaID
 class SiteTaskAreaQuery extends DatabaseQuery {
-  final String _areaID;
+  final List<String>? _areaIDs;
 
-  SiteTaskAreaQuery(this._areaID);
+  SiteTaskAreaQuery(this._areaIDs);
   @override
   fromDocument(DocumentSnapshot<Object?> snapshot) {
     return SiteTaskFactory.fromDocument(snapshot);
@@ -102,8 +105,28 @@ class SiteTaskAreaQuery extends DatabaseQuery {
 
   @override
   getQuery() {
-    return FirebaseFirestore.instance.collection("Sites").where("area",isEqualTo:_areaID);
+    return FirebaseFirestore.instance.collection("Sites").where("area",whereIn:_areaIDs);
   }
 
 }
 
+class SiteTaskMarkerFactory {
+  static Marker generateMarker(SiteTask siteTask,BuildContext context){
+    GeoPoint geoPoint = siteTask.primaryLocation;
+    return Marker(
+      markerId: MarkerId(siteTask.number.toString()),
+      position: LatLng(geoPoint.latitude,geoPoint.longitude),
+      infoWindow: InfoWindow(
+        title: siteTask.description,
+      ),
+      onTap: () {
+        showDialog(
+          context: context, 
+          builder: (BuildContext context) {
+            return SiteTaskDialog(siteTask);
+          }
+        );
+      }
+    );
+  }
+}

@@ -43,7 +43,7 @@ class _TaskFragmentState extends State<TaskFragment> {
               icon: Icon(Icons.menu));
             },
           ),
-          title: Text("Task Fragment"),
+          title: Text("Tasks"),
           centerTitle: true,
         ),       
         const SizedBox(
@@ -89,10 +89,10 @@ class _TaskFragmentState extends State<TaskFragment> {
           height: 20,
         ),
         Expanded(
-          child: Row(
+          child: PageView(
             children: [
-              Expanded(child: SiteTaskDisplay(Provider.of<WorkerGroup>(context).siteTaskIDs,"Assigned Tasks")),
-              Expanded(child: NeighborhoodDisplay(Provider.of<WorkerGroup>(context).areaIDs,"Assigned Areas"))
+              SiteTaskDisplay(Provider.of<WorkerGroup>(context).siteTaskIDs,"Assigned Sites"),
+              NeighborhoodDisplay(Provider.of<WorkerGroup>(context).areaIDs,"Assigned Areas")
             ]
           )  
         )

@@ -45,7 +45,7 @@ class AreaContent extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => FutureBuilder(
-        future: SiteTaskAreaQuery(_area.id).fromDatabase(), 
+        future: SiteTaskAreaQuery([_area.id]).fromDatabase(), 
         builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();

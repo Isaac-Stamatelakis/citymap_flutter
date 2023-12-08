@@ -1,17 +1,23 @@
-2023/12/07-17:10:12.951 2640 Reusing MANIFEST C:\Users\Isaac\AppData\Local\Temp\flutter_tools.3ad85cf3\flutter_tools_chrome_device.5ffe39bb\Default\IndexedDB\http_localhost_6112.indexeddb.leveldb/MANIFEST-000001
-2023/12/07-17:10:12.952 2640 Recovering log #6
-2023/12/07-17:10:12.952 2640 Reusing old log C:\Users\Isaac\AppData\Local\Temp\flutter_tools.3ad85cf3\flutter_tools_chrome_device.5ffe39bb\Default\IndexedDB\http_localhost_6112.indexeddb.leveldb/000006.log 
-2023/12/07-17:10:12.960 dc8 Level-0 table #11: started
-2023/12/07-17:10:12.964 dc8 Level-0 table #11: 611 bytes OK
-2023/12/07-17:10:12.966 dc8 Delete type=0 #6
-2023/12/07-17:10:12.967 2c20 Manual compaction at level-0 from '\x00\x03\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x04\x00\x00\x00' @ 0 : 0; will stop at (end)
-2023/12/07-17:24:43.168 dc8 Level-0 table #13: started
-2023/12/07-17:24:43.172 dc8 Level-0 table #13: 652 bytes OK
-2023/12/07-17:24:43.175 dc8 Delete type=0 #10
-2023/12/07-17:24:43.175 2c20 Manual compaction at level-0 from '\x00\x04\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x05\x00\x00\x00' @ 0 : 0; will stop at '\x00\x04\x00\x00\x05' @ 98 : 1
-2023/12/07-17:24:43.175 2c20 Compacting 1@0 + 1@1 files
-2023/12/07-17:24:43.178 2c20 Generated table #14@0: 11 keys, 626 bytes
-2023/12/07-17:24:43.178 2c20 Compacted 1@0 + 1@1 files => 626 bytes
-2023/12/07-17:24:43.179 2c20 compacted to: files[ 0 1 1 0 0 0 0 ]
-2023/12/07-17:24:43.179 2c20 Delete type=2 #13
-2023/12/07-17:24:43.179 2c20 Manual compaction at level-0 from '\x00\x04\x00\x00\x05' @ 98 : 1 .. '\x00\x05\x00\x00\x00' @ 0 : 0; will stop at (end)
+2023/12/08-16:23:53.516 53bc Reusing MANIFEST C:\Users\Isaac\AppData\Local\Temp\flutter_tools.864c1b4b\flutter_tools_chrome_device.69ccb50\Default\IndexedDB\http_localhost_6112.indexeddb.leveldb/MANIFEST-000001
+2023/12/08-16:23:53.517 53bc Recovering log #69
+2023/12/08-16:23:53.517 53bc Reusing old log C:\Users\Isaac\AppData\Local\Temp\flutter_tools.864c1b4b\flutter_tools_chrome_device.69ccb50\Default\IndexedDB\http_localhost_6112.indexeddb.leveldb/000069.log 
+2023/12/08-16:23:53.517 53bc Delete type=2 #11
+2023/12/08-16:23:53.517 53bc Delete type=0 #12
+2023/12/08-16:23:53.517 53bc Delete type=2 #14
+2023/12/08-16:23:53.517 53bc Delete type=2 #49
+2023/12/08-16:23:53.517 53bc Delete type=0 #51
+2023/12/08-16:23:53.517 53bc Delete type=2 #53
+2023/12/08-16:23:53.517 53bc Delete type=2 #60
+2023/12/08-16:23:53.518 53bc Delete type=0 #62
+2023/12/08-16:23:53.518 53bc Delete type=2 #64
+2023/12/08-16:23:53.518 53bc Delete type=2 #68
+2023/12/08-16:23:53.529 f1c Level-0 table #74: started
+2023/12/08-16:23:53.533 f1c Level-0 table #74: 645 bytes OK
+2023/12/08-16:23:53.535 f1c Delete type=0 #69
+2023/12/08-16:23:53.535 53bc Manual compaction at level-0 from '\x00\x16\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x17\x00\x00\x00' @ 0 : 0; will stop at '\x00\x16\x00\x00\x05' @ 441 : 1
+2023/12/08-16:23:53.535 53bc Compacting 1@0 + 1@1 files
+2023/12/08-16:23:53.538 53bc Generated table #75@0: 28 keys, 791 bytes
+2023/12/08-16:23:53.538 53bc Compacted 1@0 + 1@1 files => 791 bytes
+2023/12/08-16:23:53.540 53bc compacted to: files[ 0 1 1 0 0 0 0 ]
+2023/12/08-16:23:53.541 53bc Delete type=2 #74
+2023/12/08-16:23:53.541 53bc Manual compaction at level-0 from '\x00\x16\x00\x00\x05' @ 441 : 1 .. '\x00\x17\x00\x00\x00' @ 0 : 0; will stop at (end)
