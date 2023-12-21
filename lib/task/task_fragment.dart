@@ -179,6 +179,7 @@ class NeighborhoodDisplay extends TaskDisplay {
 class SiteTaskDisplay extends TaskDisplay {
   final List<String>? _ids;
   const SiteTaskDisplay(this._ids,super.title,{super.key});
+  
   @override
   Widget _getListWidget() {
     return FutureBuilder(
@@ -194,7 +195,7 @@ class SiteTaskDisplay extends TaskDisplay {
           }
       );
   }
-
+  
 }
 
 class TaskContent extends StatelessWidget {

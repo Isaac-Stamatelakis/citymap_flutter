@@ -4,9 +4,17 @@ import 'package:city_map/task/Area/Area.dart';
 import 'package:city_map/task/site_task/site_task.dart';
 import 'package:flutter/material.dart';
 
-class SiteTaskDialog extends StatelessWidget {
+class SiteTaskDialog extends StatefulWidget {
+  final Function _onCompletionChanged;
   final SiteTask _siteTask;
-  const SiteTaskDialog(this._siteTask,{super.key});
+  const SiteTaskDialog(this._siteTask,this._onCompletionChanged,{super.key});
+
+  @override
+  State<StatefulWidget> createState() => _SiteTaskDialogState();
+
+}
+
+class _SiteTaskDialogState extends State<SiteTaskDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -17,17 +25,18 @@ class SiteTaskDialog extends StatelessWidget {
           Center(
             child: AppBar(
             title: Text(
-                "Site#${_siteTask.number}",
+                "Site#${widget._siteTask.number}",
                 textAlign: TextAlign.center,
               ),
             ),
           ),
-          SiteTaskDialogTile("Site Type: ${_siteTask.siteType}"),
-          SiteTaskDialogTile(_siteTask.description),
-          SiteTaskDialogTile("Square Meters: ${_siteTask.squareMeters}"),
-          SiteTaskDialogTile("Number of Beds: ${_siteTask.bedAmount}"),
+          SiteTaskDialogTile("Site Type: ${widget._siteTask.siteType}"),
+          SiteTaskDialogTile(widget._siteTask.description),
+          SiteTaskDialogTile("Square Meters: ${widget._siteTask.squareMeters}"),
+          SiteTaskDialogTile("Number of Beds: ${widget._siteTask.bedAmount}"),
+          SiteTaskDialogTile("Completed: ${widget._siteTask.completed}"),
           FutureBuilder(
-            future: (_siteTask.areaID != "") ? AreaDatabaseRetriever(_siteTask.areaID).fromDatabase() : Future(() => null),
+            future: (widget._siteTask.areaID != "") ? AreaDatabaseRetriever(widget._siteTask.areaID).fromDatabase() : Future(() => null),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
@@ -58,14 +67,32 @@ class SiteTaskDialog extends StatelessWidget {
                 ),
               ) 
             )
+          ),
+          Center(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: CustomColors.darkGreen
+              ),
+              onPressed: (){
+                setState(() {
+                  widget._siteTask.completed=!widget._siteTask.completed;
+                });
+                widget._onCompletionChanged(widget._siteTask);
+              },
+              child: const Text(
+                "Set Complete",
+                style: TextStyle(
+                  color: CustomColors.antiflashWhite
+                ),
+              ) 
+            )
           )
         ],
       ),
     );
   }
-  
-}
 
+}
 class SiteTaskDialogTile extends StatelessWidget {
   final String? _title;
   const SiteTaskDialogTile(this._title,{super.key});

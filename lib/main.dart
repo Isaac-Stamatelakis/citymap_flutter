@@ -107,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _buildFragments(BuildContext context) {  
     _fragments.addAll(
       [
-        const StatefulMapWidget(),
+        const MapFragment(),
         FutureBuilder(future: _retrieveWorkerGroup(context),
         builder: (context,snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

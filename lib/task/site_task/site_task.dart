@@ -8,6 +8,7 @@ import 'package:city_map/task/site_task/site_task_dialog.dart';
 import 'package:city_map/task/task.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 /// Represents a Site
@@ -111,7 +112,17 @@ class SiteTaskAreaQuery extends DatabaseQuery {
 }
 
 class SiteTaskMarkerFactory {
-  static Marker generateMarker(SiteTask siteTask,BuildContext context){
+  static Marker generateMarker(SiteTask siteTask,BuildContext context,bool assigned,Map<String,BitmapDescriptor> bitmaps,Function callback) {
+    BitmapDescriptor? customIcon;
+    if (siteTask.completed) {
+      customIcon = bitmaps['assets/marker_completed.png'];
+    } else {
+      if (assigned) {
+        customIcon = bitmaps['assets/marker_assigned.png'];
+      } else {
+        customIcon = bitmaps['assets/marker_not_completed.png'];
+      }
+    }
     GeoPoint geoPoint = siteTask.primaryLocation;
     return Marker(
       markerId: MarkerId(siteTask.number.toString()),
@@ -119,14 +130,29 @@ class SiteTaskMarkerFactory {
       infoWindow: InfoWindow(
         title: siteTask.description,
       ),
+      icon: customIcon!,
       onTap: () {
         showDialog(
           context: context, 
           builder: (BuildContext context) {
-            return SiteTaskDialog(siteTask);
+            //return Text("HI");
+            return SiteTaskDialog(siteTask,callback);
           }
         );
       }
     );
+    
   }
+  
+  static Future<Map<String,BitmapDescriptor>> buildBitMaps(List<String> files, double size) async {
+    Size vectorSize = Size(size,size*786/512);
+    Map<String, BitmapDescriptor> bitmaps = {};
+    for (String file in files) {
+      await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: vectorSize),file).then((value) {
+          bitmaps[file] = value;
+        });
+    }
+    return bitmaps;
+  }
+
 }
