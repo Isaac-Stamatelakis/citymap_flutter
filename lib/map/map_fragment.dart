@@ -12,6 +12,8 @@ import 'package:city_map/task/site_task/site_task.dart';
 import 'package:city_map/worker/worker.dart';
 import 'package:city_map/worker/worker_group/worker_group.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as web_map;
@@ -19,8 +21,8 @@ import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 
 class MapFragment extends StatefulWidget {
-
-  const MapFragment({super.key});
+  final LatLng? startingCoordinates;
+  const MapFragment({super.key, required this.startingCoordinates});
 
   @override
   State<MapFragment> createState() => _MapFragmentState();
@@ -28,7 +30,7 @@ class MapFragment extends StatefulWidget {
 
 class _MapFragmentState extends State<MapFragment> {
 
-
+  late LatLng? cordinates = widget.startingCoordinates;
   // IDK why in flutter BitmapDescriptor factory is async so have to load when getting data
   late Map<String, BitmapDescriptor> bitmaps;
 
@@ -38,7 +40,27 @@ class _MapFragmentState extends State<MapFragment> {
       future: getData(), 
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Loading Map",
+                  style: TextStyle(
+                      fontSize: 24,
+                    ),
+                  ),
+                SizedBox(
+                  height: 50,
+                ),
+                SizedBox(
+                  height: 100,
+                  width: 100,
+                  child: CircularProgressIndicator()
+                )
+              ]
+            )
+          );
         } else if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
         } else {
@@ -62,10 +84,8 @@ class _MapFragmentState extends State<MapFragment> {
     Worker worker = await WorkerDatabaseHelper().fromDatabase();
     WorkerGroup workerGroup = await WorkerGroupDatabaseHelper(worker.groupID).fromDatabase();
     Manager manager = await ManagerDatabaseRetriever(workerGroup.managerID!).fromDatabase();
-    //List<Area> areas = (await AreaMultiDatabaseRetriever(manager.managedAreaIDs).fromDatabase()).map((dynamic item) => (item as Area)).toList();
-    LatLng startLocation = await getLocation();
+    cordinates ??= await getLocation();
     // why is this async flutter whyyyy
-    
     bitmaps = await SiteTaskMarkerFactory.buildBitMaps(
       ['assets/marker_completed.png','assets/marker_assigned.png','assets/marker_not_completed.png'], 
       30
@@ -85,7 +105,7 @@ class _MapFragmentState extends State<MapFragment> {
       }
     }
     return {
-      'location':startLocation,
+      'location':cordinates,
       'assigned':assignedSiteTasks,
       'unassigned':unassignedSiteTasks,
       'bitmaps' : bitmaps
@@ -124,7 +144,7 @@ class _BMapState extends State<_MapState> {
       children: [
         GoogleMap(
           onMapCreated: (GoogleMapController controller) {
-          _mapController = controller;
+            _mapController = controller;
           },
           myLocationEnabled: true,
           initialCameraPosition: 
@@ -136,7 +156,6 @@ class _BMapState extends State<_MapState> {
             ),
           markers: markers
           ),
-
           Container(
           margin: const EdgeInsets.only(right: 10.0),
           child: Align(
@@ -147,11 +166,13 @@ class _BMapState extends State<_MapState> {
               children: [
                 CustomGoogleMapButton(
                   image: Image.asset('assets/marker_completed.png'), 
-                  onPress: toggleCompleted
+                  onPress: toggleCompleted,
+                  hint: "Toggled Completed",
                 ),
                 CustomGoogleMapButton(
                   image: Image.asset('assets/marker_not_completed.png'), 
-                  onPress: toggleUnAssigned
+                  onPress: toggleUnAssigned,
+                  hint: "Toggled Unassigned",
                 ),
                 const SizedBox(
                   height: 105,
@@ -196,22 +217,26 @@ class UnsupportedPlatformMapFragment extends StatelessWidget {
 class CustomGoogleMapButton extends StatelessWidget {
   final Image image;
   final Function onPress;
-  const CustomGoogleMapButton({super.key, required this.image, required this.onPress});
+  final String hint;
+  const CustomGoogleMapButton({super.key, required this.image, required this.onPress, required this.hint});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color : Color.fromARGB(255, 255, 255, 255),
+    return Tooltip(
+      message: hint,
+      child: Container(
+        decoration: const BoxDecoration(
+          color : Color.fromARGB(255, 255, 255, 255),
+          
+        ),
+        width: 40,
+        height: 40,
         
-      ),
-      width: 40,
-      height: 40,
-      
-      child: IconButton(
-        onPressed:() => onPress(),
-        icon: image
-      ),
+        child: IconButton(
+          onPressed:() => onPress(),
+          icon: image
+        ),
+      )
     );
   }
 

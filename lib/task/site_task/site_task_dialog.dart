@@ -1,20 +1,40 @@
+import 'dart:html';
+
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/helper.dart';
+import 'package:city_map/map/map_fragment.dart';
 import 'package:city_map/task/Area/Area.dart';
 import 'package:city_map/task/site_task/site_task.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class SiteTaskDialog extends StatefulWidget {
+/*
+Stateful Widgets
+*/
+abstract class _SiteTaskDialog extends StatefulWidget {
   final Function _onCompletionChanged;
   final SiteTask _siteTask;
-  const SiteTaskDialog(this._siteTask,this._onCompletionChanged,{super.key});
-
-  @override
-  State<StatefulWidget> createState() => _SiteTaskDialogState();
-
+  const _SiteTaskDialog(this._siteTask,this._onCompletionChanged,{super.key});
 }
 
-class _SiteTaskDialogState extends State<SiteTaskDialog> {
+abstract class _SiteTaskDialogState extends State<_SiteTaskDialog> {
+  void completePress() {
+    setState(() {
+      widget._siteTask.completed = !widget._siteTask.completed;
+    });
+    widget._onCompletionChanged(widget._siteTask);
+  }
+}
+
+class SiteTaskListDialog extends _SiteTaskDialog {
+  const SiteTaskListDialog(super.siteTask, super.onCompletionChanged, {super.key});
+  @override
+  State<StatefulWidget> createState() => _SiteTaskListDialogState();
+}
+
+
+class _SiteTaskListDialogState extends _SiteTaskDialogState {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -22,21 +42,126 @@ class _SiteTaskDialogState extends State<SiteTaskDialog> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _BaseContent(siteTask: widget._siteTask,),
+          _SiteTaskCompleteButton(siteTask: widget._siteTask, callback: completePress),
+          _ViewOnMapButton(siteTask: widget._siteTask,)
+        ],
+      ),
+    );
+  }
+}
+
+class MapSiteTaskDialog extends _SiteTaskDialog {
+  const MapSiteTaskDialog(super.siteTask, super.onCompletionChanged, {super.key});
+  @override
+  State<StatefulWidget> createState() => _MapSiteDialogState();
+
+}
+
+class _MapSiteDialogState extends _SiteTaskDialogState {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _BaseContent(siteTask: widget._siteTask,),
+          _SiteTaskCompleteButton(siteTask: widget._siteTask, callback: completePress),
+        ],
+      ),
+    );
+  }
+}
+
+
+/*
+Widgets inside stateful widgets
+*/
+class _ViewOnMapButton extends StatelessWidget {
+  final SiteTask siteTask;
+
+  const _ViewOnMapButton({required this.siteTask});
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: CustomColors.darkGreen
+        ),
+        onPressed: (){
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => MapFragment(
+              startingCoordinates: geoPointtoLatLng())
+            ),
+          );
+        },
+        child: const Text(
+          "View on Map",
+          style: TextStyle(
+            color: CustomColors.antiflashWhite
+          ),
+        ) 
+      )
+    );
+  }
+
+  LatLng geoPointtoLatLng() {
+    GeoPoint geoPoint = siteTask.primaryLocation;
+    return LatLng(
+      geoPoint.latitude, geoPoint.longitude
+    );
+  }
+}
+class _SiteTaskCompleteButton extends StatelessWidget {
+  final SiteTask siteTask;
+  final Function() callback;
+  const _SiteTaskCompleteButton({required this.siteTask, required this.callback});
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: CustomColors.darkGreen
+        ),
+        onPressed: (){
+          callback();
+        },
+        child: const Text(
+          "Set Complete",
+          style: TextStyle(
+            color: CustomColors.antiflashWhite
+          ),
+        ) 
+      )
+    );
+  }
+}
+
+
+
+class _BaseContent extends StatelessWidget {
+  final SiteTask siteTask;
+  const _BaseContent({required this.siteTask});
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+    children: [
           Center(
             child: AppBar(
             title: Text(
-                "Site#${widget._siteTask.number}",
+                "Site#${siteTask.number}",
                 textAlign: TextAlign.center,
               ),
             ),
           ),
-          SiteTaskDialogTile("Site Type: ${widget._siteTask.siteType}"),
-          SiteTaskDialogTile(widget._siteTask.description),
-          SiteTaskDialogTile("Square Meters: ${widget._siteTask.squareMeters}"),
-          SiteTaskDialogTile("Number of Beds: ${widget._siteTask.bedAmount}"),
-          SiteTaskDialogTile("Completed: ${widget._siteTask.completed}"),
+          _SiteTaskDialogTile("Site Type: ${siteTask.siteType}"),
+          _SiteTaskDialogTile(siteTask.description),
+          _SiteTaskDialogTile("Square Meters: ${siteTask.squareMeters}"),
+          _SiteTaskDialogTile("Number of Beds: ${siteTask.bedAmount}"),
+          _SiteTaskDialogTile("Completed: ${siteTask.completed}"),
           FutureBuilder(
-            future: (widget._siteTask.areaID != "") ? AreaDatabaseRetriever(widget._siteTask.areaID).fromDatabase() : Future(() => null),
+            future: (siteTask.areaID != "") ? AreaDatabaseRetriever(siteTask.areaID).fromDatabase() : Future(() => null),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
@@ -45,7 +170,7 @@ class _SiteTaskDialogState extends State<SiteTaskDialog> {
               } else {
                 if (snapshot.hasData) {
                   Area area = snapshot.data;
-                  return SiteTaskDialogTile("Area: ${area.name}");
+                  return _SiteTaskDialogTile("Area: ${area.name}");
                 }
                 return Container();
               }
@@ -54,48 +179,15 @@ class _SiteTaskDialogState extends State<SiteTaskDialog> {
           SizedBox(
             height: Helper.getDeviceSize(context).height*0.05,
           ),
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: CustomColors.darkGreen
-              ),
-              onPressed: (){},
-              child: const Text(
-                "View on Map",
-                style: TextStyle(
-                  color: CustomColors.antiflashWhite
-                ),
-              ) 
-            )
-          ),
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: CustomColors.darkGreen
-              ),
-              onPressed: (){
-                setState(() {
-                  widget._siteTask.completed=!widget._siteTask.completed;
-                });
-                widget._onCompletionChanged(widget._siteTask);
-              },
-              child: const Text(
-                "Set Complete",
-                style: TextStyle(
-                  color: CustomColors.antiflashWhite
-                ),
-              ) 
-            )
-          )
-        ],
-      ),
+      ]
     );
   }
-
 }
-class SiteTaskDialogTile extends StatelessWidget {
+
+
+class _SiteTaskDialogTile extends StatelessWidget {
   final String? _title;
-  const SiteTaskDialogTile(this._title,{super.key});
+  const _SiteTaskDialogTile(this._title);
 
   @override
   Widget build(BuildContext context) {
@@ -106,5 +198,4 @@ class SiteTaskDialogTile extends StatelessWidget {
       title: Text("$_title"),
     );
   }
-
 }

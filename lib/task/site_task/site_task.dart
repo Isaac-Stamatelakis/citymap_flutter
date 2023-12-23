@@ -135,8 +135,7 @@ class SiteTaskMarkerFactory {
         showDialog(
           context: context, 
           builder: (BuildContext context) {
-            //return Text("HI");
-            return SiteTaskDialog(siteTask,callback);
+            return MapSiteTaskDialog(siteTask,callback);
           }
         );
       }

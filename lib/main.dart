@@ -101,13 +101,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   
   final List<Widget> _fragments = [];
-
-  
-
   void _buildFragments(BuildContext context) {  
     _fragments.addAll(
       [
-        const MapFragment(),
+        const MapFragment(startingCoordinates: null),
         FutureBuilder(future: _retrieveWorkerGroup(context),
         builder: (context,snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
