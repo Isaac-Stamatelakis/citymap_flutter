@@ -1,6 +1,7 @@
 import 'package:city_map/database/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 
 class Area {
   Area(this._name,this._primaryLocation,this._id);
@@ -11,7 +12,7 @@ class Area {
 }
 
 class AreaDatabaseRetriever extends DatabaseRetriever {
-  AreaDatabaseRetriever(super.id);
+  AreaDatabaseRetriever({required super.id});
   @override
   Area? fromDocument(DocumentSnapshot<Object?> snapshot) {
     var snapshotData = snapshot.data() as Map<String, dynamic>;
@@ -31,7 +32,7 @@ class AreaMultiDatabaseRetriever extends MultiDatabaseRetriever {
 
   @override
   DatabaseRetriever getRetriever(String id) {
-    return AreaDatabaseRetriever(id);
+    return AreaDatabaseRetriever(id:id);
   }
 
 }

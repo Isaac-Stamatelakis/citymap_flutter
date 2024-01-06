@@ -4,6 +4,7 @@ import 'dart:html';
 
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/helper.dart';
+import 'package:city_map/consts/loader.dart';
 import 'package:city_map/management/manager.dart';
 import 'package:city_map/map/app_map_fragment.dart';
 import 'package:city_map/map/marker_container.dart';
@@ -19,77 +20,30 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as web_map;
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
-
-class MapFragment extends StatefulWidget {
+class MapFragmentLoader extends SizedWidgetLoader {
+  final String? workerID;
   final LatLng? startingCoordinates;
-  const MapFragment({super.key, required this.startingCoordinates});
 
+  const MapFragmentLoader({super.key, required this.workerID, required this.startingCoordinates}) : super(size: const Size(200,200));
   @override
-  State<MapFragment> createState() => _MapFragmentState();
-}
-
-class _MapFragmentState extends State<MapFragment> {
-
-  late LatLng? cordinates = widget.startingCoordinates;
-  // IDK why in flutter BitmapDescriptor factory is async so have to load when getting data
-  late Map<String, BitmapDescriptor> bitmaps;
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getData(), 
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Loading Map",
-                  style: TextStyle(
-                      fontSize: 24,
-                    ),
-                  ),
-                SizedBox(
-                  height: 50,
-                ),
-                SizedBox(
-                  height: 100,
-                  width: 100,
-                  child: CircularProgressIndicator()
-                )
-              ]
-            )
-          );
-        } else if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
-        } else {
-          if (snapshot.data != null) {
-            dynamic data = snapshot.data;
-            return _MapState(
-              assignedSiteTasks:data['assigned'],
-              unassignedSiteTasks: data['unassigned'],
-              bitmaps: data['bitmaps'],
-              startLocation: data['location'],
-            );
-          } else {
-            return Text("Something went wrong");
-          }
-        } 
-      }
+  Widget generateContent(AsyncSnapshot snapshot) {
+    Map<String, dynamic> data = snapshot.data;
+    return _MapFragment(
+      workerGroup: data['worker_group'], 
+      siteTasks: data['site_tasks'], 
+      bitmaps: data['bitmaps'], 
+      worker: data['worker'], 
+      startingCoordinates: data['coordinates'],
     );
+    
   }
 
-  Future<dynamic> getData() async {
-    Worker worker = await WorkerDatabaseHelper().fromDatabase();
-    WorkerGroup workerGroup = await WorkerGroupDatabaseHelper(worker.groupID).fromDatabase();
-    Manager manager = await ManagerDatabaseRetriever(workerGroup.managerID!).fromDatabase();
-    cordinates ??= await getLocation();
-    // why is this async flutter whyyyy
-    bitmaps = await SiteTaskMarkerFactory.buildBitMaps(
-      ['assets/marker_completed.png','assets/marker_assigned.png','assets/marker_not_completed.png'], 
-      30
-    );
+  @override
+  Future getFuture() async {
+    Worker worker = await WorkerDatabaseHelper(workerID: workerID!).fromDatabase();
+    WorkerGroup workerGroup = await WorkerGroupDatabaseHelper(id: worker.groupID).fromDatabase();
+    Manager manager = await ManagerDatabaseRetriever(id:workerGroup.managerID!).fromDatabase();
+    
     List<SiteTask> unassignedSiteTasks = [];
     List<SiteTask> assignedSiteTasks = (await SiteTaskMultiRetriever(workerGroup.siteTaskIDs).fromDatabase()).map((dynamic item) => (item as SiteTask)).toList();
     List<SiteTask> managerSiteTasks = (await SiteTaskAreaQuery(manager.managedAreaIDs).fromDatabase())!.map((dynamic item) => (item as SiteTask)).toList();
@@ -104,39 +58,52 @@ class _MapFragmentState extends State<MapFragment> {
         unassignedSiteTasks.add(siteTask);
       }
     }
+    
+    // why is this async flutter whyyyy
+    Map<String, BitmapDescriptor> bitmaps = await SiteTaskMarkerFactory.buildBitMaps(
+      ['assets/marker_completed.png','assets/marker_assigned.png','assets/marker_not_completed.png'], 
+      30
+    );
+    
+    LatLng mapCoords;
+    if (startingCoordinates == null) {
+      LocationData locationData = await Location().getLocation();
+      
+      mapCoords = LatLng(locationData.latitude ?? 0, locationData.longitude ?? 0);
+    } else {
+      mapCoords = startingCoordinates!;
+    }
     return {
-      'location':cordinates,
-      'assigned':assignedSiteTasks,
-      'unassigned':unassignedSiteTasks,
-      'bitmaps' : bitmaps
+      'worker' : worker,
+      'worker_group' : workerGroup,
+      'site_tasks' : _SiteTaskBundle(assigned: assignedSiteTasks, unassigned: unassignedSiteTasks),
+      'bitmaps' : bitmaps,
+      'coordinates' : mapCoords
     };
   }
-
-  Future<LatLng> getLocation() async {
-    LocationData locationData = await Location().getLocation();
-    return LatLng(locationData.latitude ?? 0, locationData.longitude ?? 0);
-  }
 }
 
-class _MapState extends StatefulWidget {
-  
-  final LatLng startLocation;
-  final List<SiteTask> assignedSiteTasks;
-  final List<SiteTask> unassignedSiteTasks;
+class _SiteTaskBundle {
+  late List<SiteTask> assigned;
+  late List<SiteTask> unassigned;
+  _SiteTaskBundle({required this.assigned, required this.unassigned});
+}
+class _MapFragment extends StatefulWidget {
+  final Worker? worker;
+  final WorkerGroup workerGroup;
+  final _SiteTaskBundle siteTasks;
   final Map<String, BitmapDescriptor> bitmaps;
-
-  const _MapState({super.key, required this.startLocation, required this.assignedSiteTasks, required this.unassignedSiteTasks, required this.bitmaps});
-
-  
+  final LatLng startingCoordinates;
+  const _MapFragment({required this.worker, required this.workerGroup, required this.siteTasks, required this.bitmaps, required this.startingCoordinates});
 
   @override
-  State<StatefulWidget> createState() => _BMapState();
-
+  State<_MapFragment> createState() => _MapFragmentState();
 }
-class _BMapState extends State<_MapState> {
-  _BMapState();
+
+
+class _MapFragmentState extends State<_MapFragment> {
   late GoogleMapController _mapController;
-  late MarkerContainer markerContainer = MarkerContainer(widget.assignedSiteTasks,widget.unassignedSiteTasks,widget.bitmaps);
+  late MarkerContainer markerContainer = MarkerContainer(widget.siteTasks.assigned,widget.siteTasks.unassigned,widget.bitmaps);
   late Set<Marker> markers = markerContainer.buildMarkers(context,updateMarker);
   @override
   Widget build(BuildContext context) {
@@ -150,7 +117,7 @@ class _BMapState extends State<_MapState> {
           initialCameraPosition: 
           CameraPosition(
             bearing: 0,
-            target:widget.startLocation,
+            target:widget.startingCoordinates,
             zoom:15,
             tilt:0
             ),
@@ -239,5 +206,4 @@ class CustomGoogleMapButton extends StatelessWidget {
       )
     );
   }
-
 }

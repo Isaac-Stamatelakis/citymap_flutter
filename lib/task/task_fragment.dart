@@ -1,6 +1,7 @@
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/global_constants.dart';
 import 'package:city_map/consts/helper.dart';
+import 'package:city_map/consts/loader.dart';
 import 'package:city_map/task/Area/area.dart';
 import 'package:city_map/task/Area/area_display_list.dart';
 import 'package:city_map/task/driversheet/driversheet_dialog.dart';
@@ -15,8 +16,34 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
 
+class TaskFragmentLoader extends SizedWidgetLoader {
+  final String workerID;
+  const TaskFragmentLoader({super.key, required this.workerID, required super.size});
+  @override
+  Widget generateContent(AsyncSnapshot snapshot) {
+    Map<String,dynamic> map = snapshot.data;
+    return TaskFragment(
+      worker: map['worker'], 
+      workerGroup: map['worker_group']
+    );
+  }
+
+  @override
+  Future getFuture() async {
+    Worker worker = await WorkerDatabaseHelper(workerID: workerID).fromDatabase();
+    WorkerGroup workerGroup = await WorkerGroupDatabaseHelper(id: worker.groupID).fromDatabase();
+    return {
+      'worker' : worker,
+      'worker_group' : workerGroup
+    };
+  }
+}
+
+
 class TaskFragment extends StatefulWidget {
-  const TaskFragment ({super.key});
+  final Worker worker;
+  final WorkerGroup workerGroup;
+  const TaskFragment ({super.key, required this.worker, required this.workerGroup});
 
   @override
   State<TaskFragment> createState() => _TaskFragmentState();
@@ -24,29 +51,12 @@ class TaskFragment extends StatefulWidget {
 }
 
 class _TaskFragmentState extends State<TaskFragment> {
-  final CollectionReference users = FirebaseFirestore.instance.collection("Workers");
-  late String driverSheetID = Provider.of<WorkerGroup>(context).getDriverSheetID;
   @override
   Widget build(BuildContext context) {
     Size deviceSize = Helper.getDeviceSize(context);
     return Column(
-      
       crossAxisAlignment: CrossAxisAlignment.center,
-      
-      children: [
-        
-        AppBar(
-          backgroundColor: CustomColors.coeBlue,
-          leading: Builder(builder: (BuildContext context) {
-            return IconButton(onPressed: (){
-                Scaffold.of(context).openDrawer();
-              }, 
-              icon: Icon(Icons.menu));
-            },
-          ),
-          title: Text("Tasks"),
-          centerTitle: true,
-        ),       
+      children: [      
         const SizedBox(
           height: 20,
         ),
@@ -92,8 +102,8 @@ class _TaskFragmentState extends State<TaskFragment> {
         Expanded(
           child: PageView(
             children: [
-              SiteTaskDisplay(Provider.of<WorkerGroup>(context).siteTaskIDs,"Assigned Sites"),
-              NeighborhoodDisplay(Provider.of<WorkerGroup>(context).areaIDs,"Assigned Areas")
+              SiteTaskDisplay(ids: widget.workerGroup.siteTaskIDs, title: 'Sites',),
+              NeighborhoodDisplay(ids: widget.workerGroup.areaIDs, title: 'Areas',)
             ]
           )  
         )
@@ -105,7 +115,7 @@ class _TaskFragmentState extends State<TaskFragment> {
     showDialog(
       context: context, 
       builder: (BuildContext context) {
-        return DriverSheetDialog(driversheetID: driverSheetID);
+        return DriverSheetDialog(driversheetID: widget.workerGroup.driverSheetID!);
       }
     );
   }
@@ -122,7 +132,7 @@ class _TaskFragmentState extends State<TaskFragment> {
 /// a widget which can be displayed on a page in TaskFragment
 abstract class TaskDisplay extends StatelessWidget {
   final String title;
-  const TaskDisplay(this.title,{super.key});
+  const TaskDisplay({super.key, required this.title});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -156,12 +166,13 @@ abstract class TaskDisplay extends StatelessWidget {
 
 // Neighborhood Display for task fragment
 class NeighborhoodDisplay extends TaskDisplay {
-  final List<String>? _ids;
-  const NeighborhoodDisplay(this._ids,super.title,{super.key});
+  final List<String>? ids;
+  const NeighborhoodDisplay({super.key, required this.ids, required super.title});
+
   @override
   Widget _getListWidget() {
     return FutureBuilder(
-          future: AreaMultiDatabaseRetriever(_ids).fromDatabase(), 
+          future: AreaMultiDatabaseRetriever(ids).fromDatabase(), 
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
@@ -178,13 +189,13 @@ class NeighborhoodDisplay extends TaskDisplay {
 
 // SiteTaskDisplay 
 class SiteTaskDisplay extends TaskDisplay {
-  final List<String>? _ids;
-  const SiteTaskDisplay(this._ids,super.title,{super.key});
+  final List<String>? ids;
+  const SiteTaskDisplay({super.key, required this.ids, required super.title,});
   
   @override
   Widget _getListWidget() {
     return FutureBuilder(
-          future: SiteTaskMultiRetriever(_ids).fromDatabase(), 
+          future: SiteTaskMultiRetriever(ids).fromDatabase(), 
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();

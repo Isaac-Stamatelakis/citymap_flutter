@@ -2,7 +2,7 @@ import 'package:city_map/database/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class WorkerGroup extends ChangeNotifier {
+class WorkerGroup {
   WorkerGroup(this.dailySheetID,this.driverSheetID,this.driverID,this.managerID,this.siteTaskIDs,this.areaIDs);
   String? dailySheetID;
   String? driverSheetID;
@@ -32,7 +32,7 @@ class WorkerGroup extends ChangeNotifier {
 }
 
 class WorkerGroupDatabaseHelper extends DatabaseRetriever {
-  WorkerGroupDatabaseHelper(super.id);
+  WorkerGroupDatabaseHelper({required super.id});
   @override
   WorkerGroup? fromDocument(DocumentSnapshot<Object?> snapshot) {
     var snapshotData = snapshot.data() as Map<String, dynamic>; //snapshotData["siteTasks"]

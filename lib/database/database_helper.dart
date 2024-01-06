@@ -25,7 +25,7 @@ abstract class DatabaseHelper {
 
 abstract class DatabaseRetriever extends DatabaseHelper {
   final String id;
-  DatabaseRetriever(this.id);
+  DatabaseRetriever({required this.id});
   
 }
 

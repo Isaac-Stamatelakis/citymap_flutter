@@ -41,10 +41,18 @@ class _TaskContentState extends State<TaskContent> {
   }
   @override
   Widget build(BuildContext context) {
-    return
-        Container(
-          color: Colors.brown,
-          child: GestureDetector(
+    return GestureDetector(
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                colors: [Colors.green, Colors.green.shade300],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
             child: ListTile(
               leading: const Icon(Icons.agriculture),
               title: Text(widget._siteTask.number.toString()),
@@ -58,8 +66,10 @@ class _TaskContentState extends State<TaskContent> {
                   }
                 );
               }
+            ),
           )
-        ),
+        ],
+      )
     );
   }
 

@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-class Worker extends ChangeNotifier {
+class Worker {
   Worker(this._id,this._firstName,this._lastName,this._groupID,this._managerID,this._payroll);
   String _id;
   String _firstName;
@@ -37,10 +37,12 @@ class Worker extends ChangeNotifier {
 
   get groupID => this._groupID;
 
-  set groupID( value) => {this._groupID = value, notifyListeners()};
+  set groupID( value) => {this._groupID = value};
 }
 
 class WorkerDatabaseHelper extends DatabaseHelper {
+  final String workerID;
+  WorkerDatabaseHelper({required this.workerID});
   @override
   Worker? fromDocument(DocumentSnapshot<Object?> snapshot) {
     var snapshotData = snapshot.data() as Map<String, dynamic>;
@@ -49,6 +51,7 @@ class WorkerDatabaseHelper extends DatabaseHelper {
 
   @override
   dynamic getDatabaseReference() {
-    return FirebaseFirestore.instance.collection("Workers").doc(GlobalValues.user_id);
+    return FirebaseFirestore.instance.collection("Workers").doc(workerID);
   }
 }
+

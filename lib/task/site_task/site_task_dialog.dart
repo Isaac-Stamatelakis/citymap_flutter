@@ -91,8 +91,10 @@ class _ViewOnMapButton extends StatelessWidget {
         ),
         onPressed: (){
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => MapFragment(
-              startingCoordinates: geoPointtoLatLng())
+            MaterialPageRoute(builder: (context) => MapFragmentLoader(
+              startingCoordinates: geoPointtoLatLng(),
+              workerID: 'null'
+              )
             ),
           );
         },
@@ -161,7 +163,7 @@ class _BaseContent extends StatelessWidget {
           _SiteTaskDialogTile("Number of Beds: ${siteTask.bedAmount}"),
           _SiteTaskDialogTile("Completed: ${siteTask.completed}"),
           FutureBuilder(
-            future: (siteTask.areaID != "") ? AreaDatabaseRetriever(siteTask.areaID).fromDatabase() : Future(() => null),
+            future: (siteTask.areaID != "") ? AreaDatabaseRetriever(id:siteTask.areaID).fromDatabase() : Future(() => null),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();

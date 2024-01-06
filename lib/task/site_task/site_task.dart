@@ -73,7 +73,7 @@ class SiteTaskFactory {
 }
 /// Retrieves SiteTask with given id
 class SiteTaskDatabaseRetriever extends DatabaseRetriever {
-  SiteTaskDatabaseRetriever(super.id);
+  SiteTaskDatabaseRetriever({required super.id});
   @override
   SiteTask? fromDocument(DocumentSnapshot<Object?> snapshot) {
     return SiteTaskFactory.fromDocument(snapshot);
@@ -90,7 +90,7 @@ class SiteTaskMultiRetriever extends MultiDatabaseRetriever {
   
   @override
   DatabaseRetriever getRetriever(String id) {
-    return SiteTaskDatabaseRetriever(id);
+    return SiteTaskDatabaseRetriever(id:id);
   }
 }
 
