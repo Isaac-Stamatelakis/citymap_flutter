@@ -61,3 +61,9 @@ abstract class DatabaseQuery<T> {
   dynamic getQuery();
 }
 
+abstract class IDBManager<T> {
+  Future<String?> upload(T? value);
+  Future<void> update(T? value);
+  Future<void> delete(T? value);
+  Map<String,dynamic> toJson(T? value);
+}

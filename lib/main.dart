@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/global_constants.dart';
 import 'package:city_map/main_scaffold.dart';
-import 'package:city_map/management/management_fragment.dart';
 import 'package:city_map/map/map_fragment.dart';
 import 'package:city_map/task/task_fragment.dart';
 import 'package:city_map/worker/worker.dart';

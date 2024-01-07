@@ -55,3 +55,13 @@ class WorkerDatabaseHelper extends DatabaseHelper {
   }
 }
 
+class WorkerFactory {
+  static Worker? fromDocument(DocumentSnapshot<Object?> snapshot) {
+    if (!snapshot.exists) {
+      return null;
+    } 
+    var snapshotData = snapshot.data() as Map<String, dynamic>;
+    return Worker(snapshot.id, snapshotData['firstName'], snapshotData['lastName'], snapshotData['workerGroup'], snapshotData['manager_id'], snapshotData['payroll']);
+  }
+}
+

@@ -1,7 +1,9 @@
+import 'package:city_map/consts/global_widgets.dart';
 import 'package:city_map/consts/helper.dart';
 import 'package:city_map/consts/loader.dart';
 import 'package:city_map/management/manager.dart';
 import 'package:city_map/task/Area/area.dart';
+import 'package:city_map/task/Area/area_list.dart';
 import 'package:city_map/task/Area/dialog_area.dart';
 import 'package:city_map/task/site_task/site_task.dart';
 import 'package:city_map/worker/worker.dart';
@@ -13,7 +15,7 @@ class AreaListLoaderID extends SizedWidgetLoader {
   const AreaListLoaderID({super.key, required super.size, required this.areaIDs, required this.worker});
   @override
   Widget generateContent(AsyncSnapshot snapshot) {
-    return AreaDisplayList(snapshot.data, worker: worker);
+    return BaseAreaDisplayList(areas:snapshot.data, worker: worker);
   }
 
   @override
@@ -30,7 +32,7 @@ class ManagerAreaListLoader extends SizedWidgetLoader {
     Map<String,dynamic> data = snapshot.data;
     return Column(
       children: [
-        AreaDisplayList(data['areas'], worker: data['worker'])
+        BaseAreaDisplayList(areas:data['areas'], worker: data['worker'])
       ],
     );
   }
@@ -46,72 +48,34 @@ class ManagerAreaListLoader extends SizedWidgetLoader {
     };
   }
 }
-class AreaDisplayList extends StatelessWidget {
-  final Worker worker;
-  final List<Area>? _areas;
-  const AreaDisplayList(this._areas,{super.key, required this.worker});
+
+
+class BaseAreaDisplayList extends AbstractAreaDisplayList {
+  const BaseAreaDisplayList({super.key, required super.worker, required super.areas});
+
   @override
-  Widget build(BuildContext context) {
-    return 
-      Expanded(
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemCount: _areas!.length,
-          separatorBuilder: (_,__) => const SizedBox(),
-          itemBuilder: (context,int index) {
-              return AreaContent(_areas[index], worker: worker);
-          } 
-        )
-      );
-  }
+  State<StatefulWidget> createState() => _BaseAreaDisplayListState();
+
 }
 
-class AreaContent extends StatelessWidget {
-  final Worker worker;
-  final Area _area;
-  const AreaContent(this._area, {super.key, required this.worker});
+class _BaseAreaDisplayListState extends AbstractAreaDisplayListState {
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-          Container(
-            height: 80,
-            alignment: Alignment.center,
-            width: GlobalHelper.getPreferredWidth(context),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-              colors: [Colors.purple, Colors.purple.shade300],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: GestureDetector(
-            child: ListTile(
-              title: Text(
-                  _area.name.toString(),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white
-                  ),
-                ),
-              onTap: () {
-                _toAreaFragment(context);
-              }
-            )
-          ),
-        )
-      ],
-    );
-    
-    
+  onLongPress(Area element, BuildContext context) {
+     // Do Nothing
   }
-  void _toAreaFragment(BuildContext context) async{
-    await showDialog(
+
+  @override
+  onPress(Area element, BuildContext context) {
+    _navigateAreaDialog(element,widget.worker!);
+  }
+
+  void _navigateAreaDialog(Area area, Worker worker) {
+    showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AreaDialogLoader(area: _area, worker: worker);
+        return AreaDialogLoader(area: area, worker: worker);
       }
     );
   }
+
 }

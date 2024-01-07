@@ -51,7 +51,7 @@ class _TaskContentState extends State<TaskContent> {
             width: GlobalHelper.getPreferredWidth(context),
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                colors: [Colors.green, Colors.green.shade300],
+                colors: [Colors.blue, Colors.blue.shade300],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),

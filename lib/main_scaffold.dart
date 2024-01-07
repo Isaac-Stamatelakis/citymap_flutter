@@ -2,6 +2,9 @@
 
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/global_widgets.dart';
+import 'package:city_map/consts/loader.dart';
+import 'package:city_map/management/manager.dart';
+import 'package:city_map/management/page/fragment_management.dart';
 import 'package:city_map/map/map_fragment.dart';
 import 'package:city_map/task/Area/area_display_list.dart';
 import 'package:city_map/task/task_fragment.dart';
@@ -23,9 +26,9 @@ class MainPageFactory {
       case MainPage.Tasks:
         return BottomNavigationBarItem(icon: const Icon(Icons.view_list), label: 'Tasks', backgroundColor: color);
       case MainPage.Areas:
-        return BottomNavigationBarItem(icon: const Icon(Icons.view_list), label: 'Areas',backgroundColor: color);
+        return BottomNavigationBarItem(icon: const Icon(Icons.area_chart_outlined), label: 'Areas',backgroundColor: color);
       case MainPage.Management:
-        return BottomNavigationBarItem(icon: const Icon(Icons.view_list), label: 'Management',backgroundColor: color);
+        return BottomNavigationBarItem(icon: const Icon(Icons.manage_accounts), label: 'Management',backgroundColor: color);
     }
   }
   static List<BottomNavigationBarItem> getNavigatorBarItems(Color color) {
@@ -36,6 +39,8 @@ class MainPageFactory {
     return items;
   }
 }
+
+
 class MainScaffold extends StatefulWidget {
   final String? userID;
   final Widget? content;
@@ -75,7 +80,7 @@ class _State extends State<MainScaffold> {
       case MainPage.Areas:
         _setContent(ManagerAreaListLoader(workerID: widget.userID!), "Areas");
       case MainPage.Management:
-        // TODO: Handle this case.
+        _setContent(ManagementFragmentLoader(workerID: widget.userID!), "Management");
     }
   }
 
@@ -113,6 +118,26 @@ class _State extends State<MainScaffold> {
         ),
         centerTitle: true,
         backgroundColor: darkIndigo,
+        actions: [
+          IconButton(
+              icon: const Icon(
+                Icons.home, 
+                color: Colors.white
+              ),
+              onPressed: () {
+                Navigator.popUntil(context, (route) => route.isFirst);
+              },
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.arrow_back_outlined, 
+                color: Colors.white
+              ),
+              onPressed: () {
+                Navigator.canPop(context) ? Navigator.pop(context): null;
+              },
+            ), 
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: MainPageFactory.getNavigatorBarItems(lightIndigo),

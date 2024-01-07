@@ -135,3 +135,66 @@ abstract class AbstractDropDownSelectorState<T> extends State<AbstractDropDownSe
   String optionToString(T option);
 
 }
+
+abstract class IInteractableList<T> {
+  onPress(T element, BuildContext context);
+  onLongPress(T element, BuildContext context);
+}
+
+class ConfirmationDialog<T> extends StatelessWidget {
+  final T? value;
+  const ConfirmationDialog({super.key, required this.displayText, required this.onConfirmCallback, required this.value});
+  final Function(T?,BuildContext) onConfirmCallback;
+  final String displayText;
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      contentPadding: const EdgeInsets.all(0.0),
+      content: Container(
+        height: 200,
+        width: 300,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.white, Colors.white70],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              displayText,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.black
+              ),
+            ),
+            const SizedBox(height: 20),
+            Flexible(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SquareGradientButtonSizeable(size: const Size(100,50), colors: [Colors.blue,Colors.blue.shade400],text: "Confirm",onPress: _onConfirm),
+                  const SizedBox(width: 20),
+                  SquareGradientButtonSizeable(size: const Size(100,50), colors: [Colors.red,Colors.red.shade400],text: "Cancel",onPress: _popBack),
+                ],
+              )
+            ) 
+          ],
+        ),
+        
+      )
+    );
+  }
+  void _onConfirm(BuildContext context) {
+    _popBack(context);
+    onConfirmCallback(value,context);
+    
+  }
+  void _popBack(BuildContext context) {
+    Navigator.pop(context);
+  }
+}

@@ -1,4 +1,7 @@
+import 'dart:html';
+
 import 'package:city_map/database/database_helper.dart';
+import 'package:city_map/worker/worker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Manager {
@@ -10,7 +13,10 @@ class Manager {
 }
 
 class ManagerFactory {
-  static Manager fromDocument(DocumentSnapshot snapshot) {
+  static Manager? fromDocument(DocumentSnapshot snapshot) {
+    if (!snapshot.exists) {
+      return null;
+    }
     var snapshotData = snapshot.data() as Map<String, dynamic>;
     return Manager((snapshotData["managed_areas"] as List).map((item) => item as String).toList(), snapshotData['worker_id'], snapshot.id, snapshotData['team_lead_id']);
   }
@@ -19,13 +25,28 @@ class ManagerDatabaseRetriever extends DatabaseRetriever {
   ManagerDatabaseRetriever({required super.id});
 
   @override
-  Manager fromDocument(DocumentSnapshot<Object?> snapshot) {
+  Manager? fromDocument(DocumentSnapshot<Object?> snapshot) {
     return ManagerFactory.fromDocument(snapshot);
   }
 
   @override
   DocumentReference getDatabaseReference() {
     return FirebaseFirestore.instance.collection("Managers").doc(super.id);
+  }
+}
+
+class WorkerManagerQuery extends DatabaseQuery<Manager?> {
+  final String? workerID;
+
+  WorkerManagerQuery({required this.workerID});
+  @override
+  fromDocument(DocumentSnapshot<Object?> snapshot) {
+    return ManagerFactory.fromDocument(snapshot);
+  }
+
+  @override
+  getQuery() {
+    return FirebaseFirestore.instance.collection("Managers").where("worker_id",isEqualTo:workerID);
   }
 
 }

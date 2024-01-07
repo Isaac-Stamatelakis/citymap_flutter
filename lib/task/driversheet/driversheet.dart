@@ -55,7 +55,7 @@ class DriverSheetDatabaseHelper extends DatabaseHelper {
   }
 }
 
-class DriverSheetUploader {
+class DriverSheetUploader{
  static Map<String, dynamic> toJson(DriverSheet driverSheet) {
   return {
     'endKM' : driverSheet.endKiloMeters,

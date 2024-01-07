@@ -1,14 +1,14 @@
-2024/01/06-19:20:52.025 22a4 Reusing MANIFEST C:\Users\Isaac\AppData\Local\Temp\flutter_tools.ab309e0d\flutter_tools_chrome_device.2218db53\Default\IndexedDB\http_localhost_6112.indexeddb.leveldb/MANIFEST-000001
-2024/01/06-19:20:52.026 22a4 Recovering log #312
-2024/01/06-19:20:52.026 22a4 Reusing old log C:\Users\Isaac\AppData\Local\Temp\flutter_tools.ab309e0d\flutter_tools_chrome_device.2218db53\Default\IndexedDB\http_localhost_6112.indexeddb.leveldb/000312.log 
-2024/01/06-19:20:52.026 22a4 Delete type=2 #310
-2024/01/06-19:20:52.063 1888 Level-0 table #317: started
-2024/01/06-19:20:52.067 1888 Level-0 table #317: 643 bytes OK
-2024/01/06-19:20:52.068 1888 Delete type=0 #312
-2024/01/06-19:20:52.069 22a4 Manual compaction at level-0 from '\x00X\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00Y\x00\x00\x00' @ 0 : 0; will stop at '\x00X\x00\x00\x05' @ 1795 : 1
-2024/01/06-19:20:52.069 22a4 Compacting 1@0 + 1@1 files
-2024/01/06-19:20:52.071 22a4 Generated table #318@0: 14 keys, 1020 bytes
-2024/01/06-19:20:52.071 22a4 Compacted 1@0 + 1@1 files => 1020 bytes
-2024/01/06-19:20:52.073 22a4 compacted to: files[ 0 1 1 0 0 0 0 ]
-2024/01/06-19:20:52.073 22a4 Delete type=2 #317
-2024/01/06-19:20:52.074 22a4 Manual compaction at level-0 from '\x00X\x00\x00\x05' @ 1795 : 1 .. '\x00Y\x00\x00\x00' @ 0 : 0; will stop at (end)
+2024/01/06-22:01:22.444 7ac Reusing MANIFEST C:\Users\Isaac\AppData\Local\Temp\flutter_tools.d2fffbb7\flutter_tools_chrome_device.695f3fda\Default\IndexedDB\http_localhost_6112.indexeddb.leveldb/MANIFEST-000001
+2024/01/06-22:01:22.445 7ac Recovering log #328
+2024/01/06-22:01:22.445 7ac Reusing old log C:\Users\Isaac\AppData\Local\Temp\flutter_tools.d2fffbb7\flutter_tools_chrome_device.695f3fda\Default\IndexedDB\http_localhost_6112.indexeddb.leveldb/000328.log 
+2024/01/06-22:01:22.445 7ac Delete type=2 #326
+2024/01/06-22:01:22.478 480c Level-0 table #333: started
+2024/01/06-22:01:22.483 480c Level-0 table #333: 643 bytes OK
+2024/01/06-22:01:22.484 480c Delete type=0 #328
+2024/01/06-22:01:22.484 7ac Manual compaction at level-0 from '\x00\\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00]\x00\x00\x00' @ 0 : 0; will stop at '\x00\\x00\x00\x05' @ 1871 : 1
+2024/01/06-22:01:22.484 7ac Compacting 1@0 + 1@1 files
+2024/01/06-22:01:22.486 7ac Generated table #334@0: 14 keys, 1020 bytes
+2024/01/06-22:01:22.486 7ac Compacted 1@0 + 1@1 files => 1020 bytes
+2024/01/06-22:01:22.487 7ac compacted to: files[ 0 1 1 0 0 0 0 ]
+2024/01/06-22:01:22.487 7ac Delete type=2 #333
+2024/01/06-22:01:22.488 7ac Manual compaction at level-0 from '\x00\\x00\x00\x05' @ 1871 : 1 .. '\x00]\x00\x00\x00' @ 0 : 0; will stop at (end)

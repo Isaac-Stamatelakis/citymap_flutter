@@ -13,7 +13,6 @@ import 'package:city_map/task/driversheet/driversheet.dart';
 import 'package:city_map/task/driversheet/driversheet_dialog.dart';
 import 'package:city_map/task/site_task/site_task.dart';
 import 'package:city_map/task/site_task/site_task_list.dart';
-import 'package:city_map/task/task_dialogs/daily_sheet_dialog.dart';
 import 'package:city_map/worker/worker.dart';
 import 'package:city_map/worker/worker_group/worker_group.dart';
 import 'package:flutter/material.dart';
@@ -228,7 +227,7 @@ class NeighborhoodDisplay extends TaskDisplay {
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
             } else {
-              return AreaDisplayList(snapshot.data?.cast<Area>(), worker: worker);
+              return BaseAreaDisplayList(areas:snapshot.data?.cast<Area>(), worker: worker);
             }
           }
       );
