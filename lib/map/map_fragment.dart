@@ -46,7 +46,7 @@ class MapFragmentLoader extends SizedWidgetLoader {
     
     List<SiteTask> unassignedSiteTasks = [];
     List<SiteTask> assignedSiteTasks = (await SiteTaskMultiRetriever(workerGroup.siteTaskIDs).fromDatabase()).map((dynamic item) => (item as SiteTask)).toList();
-    List<SiteTask> managerSiteTasks = (await SiteTaskAreaQuery(manager.managedAreaIDs).fromDatabase())!.map((dynamic item) => (item as SiteTask)).toList();
+    List<SiteTask> managerSiteTasks = (await SiteTaskManagerQuery(managerID: manager.id).retrieve()).map((dynamic item) => (item as SiteTask)).toList();
     for (SiteTask siteTask in managerSiteTasks) {
       bool included = false;
       for (SiteTask assignedSiteTask in assignedSiteTasks) {

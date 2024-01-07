@@ -15,7 +15,7 @@ class AreaListLoaderID extends SizedWidgetLoader {
   const AreaListLoaderID({super.key, required super.size, required this.areaIDs, required this.worker});
   @override
   Widget generateContent(AsyncSnapshot snapshot) {
-    return BaseAreaDisplayList(areas:snapshot.data, worker: worker);
+    return BaseAreaDisplayList(areas:snapshot.data, user: worker);
   }
 
   @override
@@ -32,7 +32,7 @@ class ManagerAreaListLoader extends SizedWidgetLoader {
     Map<String,dynamic> data = snapshot.data;
     return Column(
       children: [
-        BaseAreaDisplayList(areas:data['areas'], worker: data['worker'])
+        BaseAreaDisplayList(areas:data['areas'], user: data['worker'])
       ],
     );
   }
@@ -41,7 +41,7 @@ class ManagerAreaListLoader extends SizedWidgetLoader {
   Future getFuture() async {
     Worker worker = await WorkerDatabaseHelper(workerID: workerID).fromDatabase();
     Manager manager = await ManagerDatabaseRetriever(id: worker.managerID).fromDatabase();
-    List<Area> areas = await AreaMultiDatabaseRetriever(manager.managedAreaIDs).fromDatabase();
+    List<Area>? areas = await AreaManagerQuery(managerID: manager.id).fromDatabase();
     return {
       'worker' : worker,
       'areas' : areas
@@ -50,8 +50,8 @@ class ManagerAreaListLoader extends SizedWidgetLoader {
 }
 
 
-class BaseAreaDisplayList extends AbstractAreaDisplayList {
-  const BaseAreaDisplayList({super.key, required super.worker, required super.areas});
+class BaseAreaDisplayList extends AbstractAreaDisplayList<Worker> {
+  const BaseAreaDisplayList({super.key, required super.user, required super.areas});
 
   @override
   State<StatefulWidget> createState() => _BaseAreaDisplayListState();
@@ -66,7 +66,7 @@ class _BaseAreaDisplayListState extends AbstractAreaDisplayListState {
 
   @override
   onPress(Area element, BuildContext context) {
-    _navigateAreaDialog(element,widget.worker!);
+    _navigateAreaDialog(element,widget.user!);
   }
 
   void _navigateAreaDialog(Area area, Worker worker) {

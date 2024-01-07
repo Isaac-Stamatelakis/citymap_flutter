@@ -4,14 +4,14 @@ import 'package:city_map/task/Area/area.dart';
 import 'package:city_map/worker/worker.dart';
 import 'package:flutter/material.dart';
 
-abstract class AbstractAreaDisplayList extends StatefulWidget {
-  final Worker? worker;
+abstract class AbstractAreaDisplayList<T> extends StatefulWidget {
+  final T? user;
   final List<Area>? areas;
-  const AbstractAreaDisplayList({super.key, required this.worker, required this.areas});
+  const AbstractAreaDisplayList({super.key, required this.user, required this.areas});
 
 }
 
-abstract class AbstractAreaDisplayListState extends State<AbstractAreaDisplayList> implements IInteractableList<Area>{
+abstract class AbstractAreaDisplayListState<T> extends State<AbstractAreaDisplayList<T>> implements IInteractableList<Area>{
   @override
   Widget build(BuildContext context) {
     return 
@@ -21,13 +21,13 @@ abstract class AbstractAreaDisplayListState extends State<AbstractAreaDisplayLis
         itemCount: widget.areas!.length,
         separatorBuilder: (_,__) => const SizedBox(),
         itemBuilder: (context,int index) {
-          return buildTile(widget.areas![index], widget.worker);
+          return buildTile(widget.areas![index], widget.user);
         } 
       )
     );
   }
 
-  Widget buildTile(Area area, Worker? worker) {
+  Widget buildTile(Area area, T? user) {
     return Column(
       children: [
         const SizedBox(height: 20),
@@ -64,3 +64,4 @@ abstract class AbstractAreaDisplayListState extends State<AbstractAreaDisplayLis
     );
   }
 }
+

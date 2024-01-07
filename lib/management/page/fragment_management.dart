@@ -1,7 +1,8 @@
 import 'package:city_map/consts/global_widgets.dart';
 import 'package:city_map/consts/loader.dart';
 import 'package:city_map/management/manager.dart';
-import 'package:city_map/management/page/area_edit_dialog.dart';
+import 'package:city_map/management/page/area/area_edit_dialog.dart';
+import 'package:city_map/management/page/site/site_edit_dialog.dart';
 import 'package:city_map/worker/worker.dart';
 import 'package:flutter/material.dart';
 
@@ -92,7 +93,14 @@ class _ManagementFragment extends StatelessWidget {
   }
 
   void _navigateManageSites(BuildContext context) {
-    
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => 
+      SiteEditPageLoader(
+          manager: manager,
+        ) 
+      )
+    );
   }
 
   void _navigateManageWorkerGroups(BuildContext context) {

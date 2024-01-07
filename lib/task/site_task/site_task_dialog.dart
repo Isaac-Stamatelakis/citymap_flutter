@@ -16,28 +16,18 @@ Stateful Widgets
 */
 abstract class _SiteTaskDialog extends StatefulWidget {
   final Worker? worker;
-  final Function _onCompletionChanged;
-  final SiteTask _siteTask;
-  const _SiteTaskDialog(this._siteTask,this._onCompletionChanged,{super.key, required this.worker});
-}
-
-abstract class _SiteTaskDialogState extends State<_SiteTaskDialog> {
-  void completePress() {
-    setState(() {
-      widget._siteTask.completed = !widget._siteTask.completed;
-    });
-    widget._onCompletionChanged(widget._siteTask);
-  }
+  final SiteTask siteTask;
+  const _SiteTaskDialog({super.key, required this.worker, required this.siteTask});
 }
 
 class SiteTaskListDialog extends _SiteTaskDialog {
-  const SiteTaskListDialog(super.siteTask, super.onCompletionChanged, {super.key, required super.worker});
+  const SiteTaskListDialog({super.key, required super.worker, required super.siteTask});
   @override
   State<StatefulWidget> createState() => _SiteTaskListDialogState();
 }
 
 
-class _SiteTaskListDialogState extends _SiteTaskDialogState {
+class _SiteTaskListDialogState extends State<SiteTaskListDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -45,23 +35,29 @@ class _SiteTaskListDialogState extends _SiteTaskDialogState {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _BaseContent(siteTask: widget._siteTask,),
-          _SiteTaskCompleteButton(siteTask: widget._siteTask, callback: completePress),
-          _ViewOnMapButton(siteTask: widget._siteTask, worker: widget.worker)
+          _BaseContent(siteTask: widget.siteTask,),
+          _SiteTaskCompleteButton(siteTask: widget.siteTask, callback: completePress),
+          _ViewOnMapButton(siteTask: widget.siteTask, worker: widget.worker)
         ],
       ),
     );
   }
+
+  void completePress() {
+    setState(() {
+      
+    });
+  }
 }
 
 class MapSiteTaskDialog extends _SiteTaskDialog {
-  const MapSiteTaskDialog(super.siteTask, super.onCompletionChanged, {super.key, required super.worker});
+  const MapSiteTaskDialog({super.key, required super.worker, required super.siteTask});
   @override
   State<StatefulWidget> createState() => _MapSiteDialogState();
 
 }
 
-class _MapSiteDialogState extends _SiteTaskDialogState {
+class _MapSiteDialogState extends State<MapSiteTaskDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -69,11 +65,16 @@ class _MapSiteDialogState extends _SiteTaskDialogState {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _BaseContent(siteTask: widget._siteTask,),
-          _SiteTaskCompleteButton(siteTask: widget._siteTask, callback: completePress),
+          _BaseContent(siteTask: widget.siteTask,),
+          _SiteTaskCompleteButton(siteTask: widget.siteTask, callback: completePress),
         ],
       ),
     );
+  }
+  void completePress() {
+    setState(() {
+      
+    });
   }
 }
 

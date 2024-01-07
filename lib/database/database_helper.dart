@@ -67,3 +67,4 @@ abstract class IDBManager<T> {
   Future<void> delete(T? value);
   Map<String,dynamic> toJson(T? value);
 }
+

@@ -18,7 +18,7 @@ class AreaDialogLoader extends WidgetLoader {
 
   @override
   Future getFuture() {
-    return SiteTaskAreaQuery([area.id]).fromDatabase();
+    return SiteTaskAreaQuery(area.id!).fromDatabase();
   }
 
 }
@@ -73,7 +73,7 @@ class _AreaDialogState extends State<AreaDialog> {
             SizedBox(
               height: MediaQuery.of(context).size.height/2,
               width: GlobalHelper.getPreferredWidth(context),
-              child:  SiteTaskDisplayList(widget.siteTasks, worker: widget.worker)
+              child:  SiteTaskDisplayList(siteTasks:widget.siteTasks, user: widget.worker)
             )
           ],
         )

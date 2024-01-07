@@ -172,7 +172,7 @@ class ConfirmationDialog<T> extends StatelessWidget {
                 color: Colors.black
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 20), 
             Flexible(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

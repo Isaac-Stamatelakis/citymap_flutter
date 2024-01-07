@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 class Area {
-  Area(this._name,this.primaryLocation,this._id);
-  String? _name; String? get name => this._name; set name(String? value) => this._name = value;
-  String? _id; get id => this._id; set id( value) => this._id = value;
+  Area({required this.name,required this.primaryLocation,required this.id,required this.managerID});
+  String? managerID;
+  String? name; 
+  String? id; 
   GeoPoint? primaryLocation;
   
 }
@@ -15,7 +16,7 @@ class Area {
 class AreaFactory {
   static Area? fromDocument(DocumentSnapshot<Object?> snapshot) {
     var snapshotData = snapshot.data() as Map<String, dynamic>;
-    return Area(snapshot['name'], snapshotData['primaryLocation'], snapshot.id);
+    return Area(name:snapshot['name'], primaryLocation: snapshotData['primaryLocation'],id: snapshot.id, managerID: snapshot['manager_id']);
   }
 }
 class AreaDatabaseRetriever extends DatabaseRetriever {
@@ -43,7 +44,7 @@ class AreaMultiDatabaseRetriever extends MultiDatabaseRetriever<Area> {
 
 }
 
-class AreaManagerQuery extends DatabaseQuery {
+class AreaManagerQuery extends DatabaseQuery<Area> {
   final String managerID;
 
   AreaManagerQuery({required this.managerID});
@@ -56,7 +57,6 @@ class AreaManagerQuery extends DatabaseQuery {
   getQuery() {
     return FirebaseFirestore.instance.collection("Areas").where("manager_id",isEqualTo:managerID);
   }
-
 }
 
 class AreaUploader implements IDBManager<Area> {
@@ -75,6 +75,7 @@ class AreaUploader implements IDBManager<Area> {
       return {};
     }
     return {
+      'manager_id' : value.managerID,
       'name' : value.name,
       'primaryLocation' : value.primaryLocation
     };

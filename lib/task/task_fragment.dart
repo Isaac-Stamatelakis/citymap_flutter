@@ -227,7 +227,7 @@ class NeighborhoodDisplay extends TaskDisplay {
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
             } else {
-              return BaseAreaDisplayList(areas:snapshot.data?.cast<Area>(), worker: worker);
+              return BaseAreaDisplayList(areas:snapshot.data?.cast<Area>(), user: worker);
             }
           }
       );
@@ -250,7 +250,7 @@ class SiteTaskDisplay extends TaskDisplay {
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
             } else {
-              return Expanded(child: SiteTaskDisplayList(snapshot.data?.cast<SiteTask>(), worker: worker,));
+              return Expanded(child: SiteTaskDisplayList(siteTasks: snapshot.data?.cast<SiteTask>(), user: worker));
             }
           }
       );
