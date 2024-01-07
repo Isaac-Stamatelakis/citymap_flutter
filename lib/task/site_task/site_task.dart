@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'dart:html';
 import 'dart:math';
 
 import 'package:city_map/database/database_helper.dart';
 import 'package:city_map/consts/global_constants.dart';
 import 'package:city_map/task/site_task/site_task_dialog.dart';
 import 'package:city_map/task/task.dart';
+import 'package:city_map/worker/worker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
@@ -95,9 +95,8 @@ class SiteTaskMultiRetriever extends MultiDatabaseRetriever {
 }
 
 /// Retrieves siteTask with given _areaID
-class SiteTaskAreaQuery extends DatabaseQuery {
+class SiteTaskAreaQuery extends DatabaseQuery<SiteTask> {
   final List<String>? _areaIDs;
-
   SiteTaskAreaQuery(this._areaIDs);
   @override
   fromDocument(DocumentSnapshot<Object?> snapshot) {
@@ -135,7 +134,7 @@ class SiteTaskMarkerFactory {
         showDialog(
           context: context, 
           builder: (BuildContext context) {
-            return MapSiteTaskDialog(siteTask,callback);
+            return MapSiteTaskDialog(siteTask,callback, worker: null);
           }
         );
       }

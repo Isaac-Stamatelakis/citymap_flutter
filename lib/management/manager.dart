@@ -18,7 +18,6 @@ class ManagerFactory {
 class ManagerDatabaseRetriever extends DatabaseRetriever {
   ManagerDatabaseRetriever({required super.id});
 
- 
   @override
   Manager fromDocument(DocumentSnapshot<Object?> snapshot) {
     return ManagerFactory.fromDocument(snapshot);

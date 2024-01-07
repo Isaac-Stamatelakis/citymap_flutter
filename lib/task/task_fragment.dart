@@ -1,9 +1,15 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/global_constants.dart';
+import 'package:city_map/consts/global_widgets.dart';
 import 'package:city_map/consts/helper.dart';
 import 'package:city_map/consts/loader.dart';
 import 'package:city_map/task/Area/area.dart';
 import 'package:city_map/task/Area/area_display_list.dart';
+import 'package:city_map/task/dailycheck/dailycheck.dart';
+import 'package:city_map/task/dailycheck/dialoge_dailycheck.dart';
+import 'package:city_map/task/driversheet/driversheet.dart';
 import 'package:city_map/task/driversheet/driversheet_dialog.dart';
 import 'package:city_map/task/site_task/site_task.dart';
 import 'package:city_map/task/site_task/site_task_list.dart';
@@ -51,9 +57,10 @@ class TaskFragment extends StatefulWidget {
 }
 
 class _TaskFragmentState extends State<TaskFragment> {
+  late _TaskState selectedState = _TaskState.AssignedSites;
   @override
   Widget build(BuildContext context) {
-    Size deviceSize = Helper.getDeviceSize(context);
+    Size deviceSize = GlobalHelper.getDeviceSize(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [      
@@ -63,99 +70,141 @@ class _TaskFragmentState extends State<TaskFragment> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox( 
-            width: deviceSize.width*0.3,
-            height: 40,
-            child: ElevatedButton(
-              onPressed: () {_driverButtonPress();},
-              child: const Text('Driver Sheet')
+          children: [
+            SizedBox( 
+              width: deviceSize.width*0.3,
+              height: 40,
+              child: ElevatedButton(
+                onPressed: () {_driverButtonPress();},
+                child: const Text('Driver Sheet')
+              ),
             ),
-          ),
-          SizedBox(
-            width: deviceSize.width*0.025,
-          ),
-          SizedBox(
-            width: deviceSize.width*0.3,
-            height: 40,
-            child: ElevatedButton(
-              onPressed: () {_dailyButtonPress();},
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Daily Sheet'),
-                  SizedBox(
-                    width: deviceSize.width*0.005,
-                  ),
-                  const Icon(Icons.edit)
-                ],
-              ) 
+            SizedBox(
+              width: deviceSize.width*0.025,
             ),
-          ),
-        ]
-        
+            SizedBox(
+              width: deviceSize.width*0.3,
+              height: 40,
+              child: ElevatedButton(
+                onPressed: () {_dailyButtonPress();},
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Daily Sheet'),
+                    SizedBox(
+                      width: deviceSize.width*0.005,
+                    ),
+                    const Icon(Icons.edit)
+                  ],
+                ) 
+              ),
+            ),
+          ]
         ),
-        
         const SizedBox(
           height: 20,
         ),
-        Expanded(
-          child: PageView(
-            children: [
-              SiteTaskDisplay(ids: widget.workerGroup.siteTaskIDs, title: 'Sites',),
-              NeighborhoodDisplay(ids: widget.workerGroup.areaIDs, title: 'Areas',)
-            ]
-          )  
-        )
+        Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+              colors: [Colors.green, Colors.green.shade300],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: _TaskDropDownSelector(
+            onSelect:_onMenuSelect, 
+            size: Size(MediaQuery.of(context).size.width/2,50), 
+            color: Colors.green, 
+            textColor: Colors.white,
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Expanded(child: _getTaskContent()) 
       ],
     );
   }
 
-  void _driverButtonPress() {
-    showDialog(
-      context: context, 
-      builder: (BuildContext context) {
-        return DriverSheetDialog(driversheetID: widget.workerGroup.driverSheetID!);
-      }
-    );
+  void _onMenuSelect(_TaskState? state) {
+    selectedState = state!;
+    setState(() {
+      
+    });
   }
-  void _dailyButtonPress() {
-    showDialog(
+  Widget _getTaskContent() {
+    switch (selectedState) {
+      case _TaskState.AssignedSites:
+        return SiteTaskDisplay(ids: widget.workerGroup.siteTaskIDs, worker: widget.worker);
+      case _TaskState.AssignedAreas:
+        return NeighborhoodDisplay(ids: widget.workerGroup.areaIDs, worker: widget.worker);
+    }
+  }
+  
+  void _driverButtonPress() async {
+    DriverSheet driverSheet = await DriverSheetDatabaseHelper(widget.workerGroup.driverSheetID!).fromDatabase();
+    _showDriverSheet(driverSheet);
+  }
+  void _showDriverSheet(DriverSheet driverSheet) async {
+    await showDialog(
       context: context, 
       builder: (BuildContext context) {
-        return const DailySheetDialog();
+        return DriverSheetDialog(driverSheet: driverSheet);
       }
     );
+    DriverSheetUploader.update(driverSheet);
+
+  }
+  void _dailyButtonPress() async {
+    DailyCheckContainer dailyCheckContainer = await DailyCheckContainerRetriver(dbID: widget.workerGroup.dailySheetID).fromDatabase();
+    _showDailyCheck(dailyCheckContainer);
+  }
+
+  void _showDailyCheck(DailyCheckContainer checkContainer) async {
+    await showDialog(
+      context: context, 
+      builder: (BuildContext context) {
+        return DailyCheckDialog(checkContainer: checkContainer);
+      }
+    );
+    DailyCheckUploader.update(checkContainer);
   }
 }
 
+enum _TaskState {
+  AssignedSites,
+  AssignedAreas,
+}
+class _TaskDropDownSelector extends AbstractDropDownSelector<_TaskState> {
+  const _TaskDropDownSelector({
+    required super.onSelect, 
+    required super.size, 
+    required super.color, 
+    required super.textColor
+  }) : super(initalSelect: _TaskState.AssignedSites, options: _TaskState.values);
+
+  @override
+  State<StatefulWidget> createState() => _TaskDropDownSelectorState();
+
+}
+class _TaskDropDownSelectorState extends AbstractDropDownSelectorState<_TaskState> {
+  @override
+  String optionToString(_TaskState option) {
+    return option.toString().split(".")[1];
+  }
+
+}
+
+
 /// a widget which can be displayed on a page in TaskFragment
 abstract class TaskDisplay extends StatelessWidget {
-  final String title;
-  const TaskDisplay({super.key, required this.title});
+  final Worker worker;
+  const TaskDisplay({super.key, required this.worker});
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          alignment: Alignment.center,
-          width: Helper.getDeviceSize(context).width*0.2,
-          height: 30,
-          decoration: BoxDecoration(
-            color: Colors.blue, // background color of the card
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 20
-            ),
-            )
-        ),
-        const SizedBox(
-          height: 30,
-        ),
         _getListWidget(),
         
       ],
@@ -167,7 +216,7 @@ abstract class TaskDisplay extends StatelessWidget {
 // Neighborhood Display for task fragment
 class NeighborhoodDisplay extends TaskDisplay {
   final List<String>? ids;
-  const NeighborhoodDisplay({super.key, required this.ids, required super.title});
+  const NeighborhoodDisplay({super.key, required this.ids, required super.worker});
 
   @override
   Widget _getListWidget() {
@@ -179,7 +228,7 @@ class NeighborhoodDisplay extends TaskDisplay {
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
             } else {
-              return AreaDisplayList(snapshot.data?.cast<Area>());
+              return AreaDisplayList(snapshot.data?.cast<Area>(), worker: worker);
             }
           }
       );
@@ -190,7 +239,7 @@ class NeighborhoodDisplay extends TaskDisplay {
 // SiteTaskDisplay 
 class SiteTaskDisplay extends TaskDisplay {
   final List<String>? ids;
-  const SiteTaskDisplay({super.key, required this.ids, required super.title,});
+  const SiteTaskDisplay({super.key, required this.ids, required super.worker});
   
   @override
   Widget _getListWidget() {
@@ -202,7 +251,7 @@ class SiteTaskDisplay extends TaskDisplay {
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
             } else {
-              return SiteTaskDisplayList(snapshot.data?.cast<SiteTask>());
+              return Expanded(child: SiteTaskDisplayList(snapshot.data?.cast<SiteTask>(), worker: worker,));
             }
           }
       );

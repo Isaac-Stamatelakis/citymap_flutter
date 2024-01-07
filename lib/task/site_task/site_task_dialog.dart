@@ -1,10 +1,12 @@
-import 'dart:html';
+
 
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/helper.dart';
+import 'package:city_map/main_scaffold.dart';
 import 'package:city_map/map/map_fragment.dart';
 import 'package:city_map/task/Area/Area.dart';
 import 'package:city_map/task/site_task/site_task.dart';
+import 'package:city_map/worker/worker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -13,9 +15,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 Stateful Widgets
 */
 abstract class _SiteTaskDialog extends StatefulWidget {
+  final Worker? worker;
   final Function _onCompletionChanged;
   final SiteTask _siteTask;
-  const _SiteTaskDialog(this._siteTask,this._onCompletionChanged,{super.key});
+  const _SiteTaskDialog(this._siteTask,this._onCompletionChanged,{super.key, required this.worker});
 }
 
 abstract class _SiteTaskDialogState extends State<_SiteTaskDialog> {
@@ -28,7 +31,7 @@ abstract class _SiteTaskDialogState extends State<_SiteTaskDialog> {
 }
 
 class SiteTaskListDialog extends _SiteTaskDialog {
-  const SiteTaskListDialog(super.siteTask, super.onCompletionChanged, {super.key});
+  const SiteTaskListDialog(super.siteTask, super.onCompletionChanged, {super.key, required super.worker});
   @override
   State<StatefulWidget> createState() => _SiteTaskListDialogState();
 }
@@ -44,7 +47,7 @@ class _SiteTaskListDialogState extends _SiteTaskDialogState {
         children: [
           _BaseContent(siteTask: widget._siteTask,),
           _SiteTaskCompleteButton(siteTask: widget._siteTask, callback: completePress),
-          _ViewOnMapButton(siteTask: widget._siteTask,)
+          _ViewOnMapButton(siteTask: widget._siteTask, worker: widget.worker)
         ],
       ),
     );
@@ -52,7 +55,7 @@ class _SiteTaskListDialogState extends _SiteTaskDialogState {
 }
 
 class MapSiteTaskDialog extends _SiteTaskDialog {
-  const MapSiteTaskDialog(super.siteTask, super.onCompletionChanged, {super.key});
+  const MapSiteTaskDialog(super.siteTask, super.onCompletionChanged, {super.key, required super.worker});
   @override
   State<StatefulWidget> createState() => _MapSiteDialogState();
 
@@ -80,8 +83,8 @@ Widgets inside stateful widgets
 */
 class _ViewOnMapButton extends StatelessWidget {
   final SiteTask siteTask;
-
-  const _ViewOnMapButton({required this.siteTask});
+  final Worker? worker;
+  const _ViewOnMapButton({required this.siteTask, required this.worker});
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -90,11 +93,20 @@ class _ViewOnMapButton extends StatelessWidget {
           backgroundColor: CustomColors.darkGreen
         ),
         onPressed: (){
+          while (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => MapFragmentLoader(
-              startingCoordinates: geoPointtoLatLng(),
-              workerID: 'null'
-              )
+            MaterialPageRoute(builder: (context) => 
+            MainScaffold(
+              content: MapFragmentLoader(
+                workerID: worker!.id, 
+                startingCoordinates:  geoPointtoLatLng()
+              ),
+              title: '', 
+              initalPage: MainPage.Map, 
+              userID: worker!.id,
+              ),
             ),
           );
         },
@@ -179,7 +191,7 @@ class _BaseContent extends StatelessWidget {
             }
           ),
           SizedBox(
-            height: Helper.getDeviceSize(context).height*0.05,
+            height: GlobalHelper.getDeviceSize(context).height*0.05,
           ),
       ]
     );

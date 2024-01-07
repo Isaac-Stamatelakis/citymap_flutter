@@ -3,8 +3,10 @@
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/global_widgets.dart';
 import 'package:city_map/map/map_fragment.dart';
+import 'package:city_map/task/Area/area_display_list.dart';
 import 'package:city_map/task/task_fragment.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 enum MainPage {
   Map,
@@ -39,7 +41,7 @@ class MainScaffold extends StatefulWidget {
   final Widget? content;
   final String title;
   final MainPage initalPage;
-  const MainScaffold({super.key, required this.content, required this.title, required this.initalPage, required this.userID,});
+  const MainScaffold({super.key, required this.content, required this.title, required this.initalPage, required this.userID});
   
   @override
   State<MainScaffold> createState() => _State();
@@ -65,13 +67,13 @@ class _State extends State<MainScaffold> {
   void _buildFragments() {  
     switch (currentPage) {
       case MainPage.Map:
-        _setContent(MapFragmentLoader(startingCoordinates: null, workerID: widget.userID!), "Map");
+        _setContent(MapFragmentLoader(startingCoordinates:null, workerID: widget.userID!), "Map");
         return;
       case MainPage.Tasks:
         _setContent(TaskFragmentLoader(workerID: widget.userID!, size: const Size(200,200)), "Tasks");
         return;
       case MainPage.Areas:
-        // TODO: Handle this case.
+        _setContent(ManagerAreaListLoader(workerID: widget.userID!), "Areas");
       case MainPage.Management:
         // TODO: Handle this case.
     }
@@ -93,7 +95,7 @@ class _State extends State<MainScaffold> {
             width: double.maxFinite,  
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.blue.shade200,Colors.blue.shade100],
+                colors: [Colors.blue.shade100,Colors.white70],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter
               )

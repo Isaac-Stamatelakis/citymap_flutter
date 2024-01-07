@@ -78,3 +78,60 @@ class SquareGradientButtonSizeable extends StatelessWidget {
     );
   }
 }
+
+abstract class AbstractDropDownSelector<T> extends StatefulWidget {
+  final Size size;
+  final Color color;
+  final Color textColor;
+  final Function(T?) onSelect;
+  final List<T> options;
+  final T? initalSelect;
+  const AbstractDropDownSelector({super.key, required this.onSelect, required this.options, required this.initalSelect, required this.size, required this.color, required this.textColor});
+}
+  
+abstract class AbstractDropDownSelectorState<T> extends State<AbstractDropDownSelector<T>> {
+  late T? selected = widget.initalSelect;
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: ThemeData(
+        canvasColor: widget.color
+      ), 
+      child: Container(
+        width: widget.size.width,
+        height: widget.size.height,   
+        alignment: Alignment.center,
+        child :DropdownButton<T>(
+          value: selected,
+          alignment: Alignment.centerRight,
+          onChanged: (T? newValue) {
+            setState(() {
+              selected = newValue;
+              widget.onSelect(newValue);
+            });
+            
+          },
+          items: widget.options.map((T option) {
+            return DropdownMenuItem<T>(
+              value: option,
+              child: Row(
+                children: [
+                  Text(
+                    optionToString(option),
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: widget.textColor
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        )
+      )
+    );
+  }
+
+  String optionToString(T option);
+
+}

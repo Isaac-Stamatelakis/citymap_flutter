@@ -41,10 +41,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const MainScaffold(
-        initalPage: MainPage.Tasks, 
-        content: null, 
-        title: '',
-        userID: "5e9e198fd2454634",
+          initalPage: MainPage.Tasks, 
+          content: null,
+          title: '',
+          userID: "5e9e198fd2454634", 
         ),
     );
   }

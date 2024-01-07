@@ -11,12 +11,17 @@ class Area {
   
 }
 
+class AreaFactory {
+  static Area? fromDocument(DocumentSnapshot<Object?> snapshot) {
+    var snapshotData = snapshot.data() as Map<String, dynamic>;
+    return Area(snapshot['name'], snapshotData['primaryLocation'], snapshot.id);
+  }
+}
 class AreaDatabaseRetriever extends DatabaseRetriever {
   AreaDatabaseRetriever({required super.id});
   @override
   Area? fromDocument(DocumentSnapshot<Object?> snapshot) {
-    var snapshotData = snapshot.data() as Map<String, dynamic>;
-    return Area(snapshot['name'], snapshotData['primaryLocation'], snapshot.id);
+    return AreaFactory.fromDocument(snapshot);
   }
 
   @override
@@ -27,12 +32,28 @@ class AreaDatabaseRetriever extends DatabaseRetriever {
 }
 
 
-class AreaMultiDatabaseRetriever extends MultiDatabaseRetriever {
+class AreaMultiDatabaseRetriever extends MultiDatabaseRetriever<Area> {
   AreaMultiDatabaseRetriever(super.ids);
 
   @override
   DatabaseRetriever getRetriever(String id) {
     return AreaDatabaseRetriever(id:id);
+  }
+
+}
+
+class AreaManagerQuery extends DatabaseQuery {
+  final String managerID;
+
+  AreaManagerQuery({required this.managerID});
+  @override
+  fromDocument(DocumentSnapshot<Object?> snapshot) {
+    return AreaFactory.fromDocument(snapshot);
+  }
+
+  @override
+  getQuery() {
+    return FirebaseFirestore.instance.collection("Areas").where("manager_id",isEqualTo:managerID);
   }
 
 }

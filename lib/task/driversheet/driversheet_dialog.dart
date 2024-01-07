@@ -1,38 +1,29 @@
 import 'package:city_map/consts/colors.dart';
 import 'package:city_map/consts/helper.dart';
+import 'package:city_map/consts/loader.dart';
 import 'package:city_map/task/driversheet/driversheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 
 class DriverSheetDialog extends StatefulWidget {
-  final String driversheetID;
-  const DriverSheetDialog({super.key, required this.driversheetID});
-
-  @override
-  State<DriverSheetDialog> createState() => _DriverSheetDialogState();
-}
-
-class _DriverSheetDialogState extends State<DriverSheetDialog> {
-  @override
-  Widget build(BuildContext context) {
-
-    
-    return Helper.commonFutureBuilder(
-      DriverSheetDatabaseHelper(widget.driversheetID).fromDatabase(),
-      buildFromFuture
-    );
-  }
-
-  Widget buildFromFuture(AsyncSnapshot<dynamic> snapshot) {
-    DriverSheet driverSheet = snapshot.data as DriverSheet;
-    print(driverSheet.dbID);
-    return _DialogContent(driverSheet:driverSheet);
-  }
-}
-
-class _DialogContent extends StatelessWidget {
   final DriverSheet driverSheet;
 
-  const _DialogContent({required this.driverSheet});
+  const DriverSheetDialog({super.key, required this.driverSheet});
+
+  @override
+  State<DriverSheetDialog> createState() => _DialogContentState();
+}
+
+class _DialogContentState extends State<DriverSheetDialog> {
+  final TextEditingController _startController = TextEditingController();
+  final TextEditingController _endController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _startController.text = widget.driverSheet.startKiloMeters.toString();
+    _endController.text = widget.driverSheet.endKiloMeters.toString();
+  }
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -46,29 +37,54 @@ class _DialogContent extends StatelessWidget {
               ),
             ),
           ),
-          _DialogTile("Vehicle: ${driverSheet.vehicleID}" ),
+          _DialogTile("Vehicle: ${widget.driverSheet.vehicleID}" ),
           TextField(
-            decoration: InputDecoration(
-              labelText: "End KM: "
+            controller: _startController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'^\d+\.?\d{0,2}$'),
+              ),
+            ],
+            decoration: const InputDecoration(
+              labelText: 'Start KM',
+              labelStyle: TextStyle(
+                color: Colors.grey
+              ),
             ),
+            onChanged: (value) {
+              widget.driverSheet.startKiloMeters = double.parse(value);
+            },
           ),
           TextField(
-            decoration: InputDecoration(
-              labelText: "Start KM: "
+            controller: _endController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'^\d+\.?\d{0,2}$'),
+              ),
+            ],
+            decoration: const InputDecoration(
+              labelText: 'End KM',
+              labelStyle: TextStyle(
+                color: Colors.grey
+              ),
             ),
+            onChanged: (value) {
+              widget.driverSheet.endKiloMeters = double.parse(value);
+            },
           ),
-          Container(
+          const SizedBox(height: 20),
+          SizedBox(
             height: 300.0, // Change as per your requirement
             width: 300.0, // Change as per your requirement
             child: ListView.builder(
-              
-              itemCount: driverSheet.checks?.length,
+              itemCount: widget.driverSheet.checks?.length,
               itemBuilder: (context, index) {
-                return _ListTile(map: driverSheet.checks?[index]);
+                return _ListTile(map: widget.driverSheet.checks?[index]);
               },
             )
           )
-          
         ]
       )
     );
@@ -119,12 +135,10 @@ class _ListTileState extends State<_ListTile> {
         TextField(
           controller: _controller,
           decoration: const InputDecoration(
-            hintText: "Describe State if Damaged"
+            hintText: "Describe State if Failed"
           ),
         )
       ],
     );
-
-    
   }
 }
