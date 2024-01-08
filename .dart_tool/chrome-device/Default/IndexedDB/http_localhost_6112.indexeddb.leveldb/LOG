@@ -1,14 +1,93 @@
-2024/01/07-16:32:36.763 613c Reusing MANIFEST C:\Users\Isaac\AppData\Local\Temp\flutter_tools.b222246f\flutter_tools_chrome_device.ee72333d\Default\IndexedDB\http_localhost_6112.indexeddb.leveldb/MANIFEST-000001
-2024/01/07-16:32:36.764 613c Recovering log #388
-2024/01/07-16:32:36.764 613c Reusing old log C:\Users\Isaac\AppData\Local\Temp\flutter_tools.b222246f\flutter_tools_chrome_device.ee72333d\Default\IndexedDB\http_localhost_6112.indexeddb.leveldb/000388.log 
-2024/01/07-16:32:36.764 613c Delete type=2 #386
-2024/01/07-16:32:36.791 3c0c Level-0 table #393: started
-2024/01/07-16:32:36.794 3c0c Level-0 table #393: 650 bytes OK
-2024/01/07-16:32:36.796 3c0c Delete type=0 #388
-2024/01/07-16:32:36.796 613c Manual compaction at level-0 from '\x00k\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00l\x00\x00\x00' @ 0 : 0; will stop at '\x00k\x00\x00\x05' @ 2156 : 1
-2024/01/07-16:32:36.797 613c Compacting 1@0 + 1@1 files
-2024/01/07-16:32:36.798 613c Generated table #394@0: 14 keys, 1019 bytes
-2024/01/07-16:32:36.798 613c Compacted 1@0 + 1@1 files => 1019 bytes
-2024/01/07-16:32:36.799 613c compacted to: files[ 0 1 1 0 0 0 0 ]
-2024/01/07-16:32:36.799 613c Delete type=2 #393
-2024/01/07-16:32:36.800 613c Manual compaction at level-0 from '\x00k\x00\x00\x05' @ 2156 : 1 .. '\x00l\x00\x00\x00' @ 0 : 0; will stop at (end)
+2024/01/07-23:21:32.015 4a50 Reusing MANIFEST C:\Users\Isaac\AppData\Local\Temp\flutter_tools.d6f77e67\flutter_tools_chrome_device.b30c1975\Default\IndexedDB\http_localhost_6112.indexeddb.leveldb/MANIFEST-000001
+2024/01/07-23:21:32.016 4a50 Recovering log #408
+2024/01/07-23:21:32.017 4a50 Reusing old log C:\Users\Isaac\AppData\Local\Temp\flutter_tools.d6f77e67\flutter_tools_chrome_device.b30c1975\Default\IndexedDB\http_localhost_6112.indexeddb.leveldb/000408.log 
+2024/01/07-23:21:32.017 4a50 Delete type=2 #8
+2024/01/07-23:21:32.017 4a50 Delete type=2 #11
+2024/01/07-23:21:32.018 4a50 Delete type=0 #12
+2024/01/07-23:21:32.018 4a50 Delete type=2 #14
+2024/01/07-23:21:32.018 4a50 Delete type=2 #49
+2024/01/07-23:21:32.018 4a50 Delete type=0 #51
+2024/01/07-23:21:32.018 4a50 Delete type=2 #53
+2024/01/07-23:21:32.018 4a50 Delete type=2 #60
+2024/01/07-23:21:32.018 4a50 Delete type=0 #62
+2024/01/07-23:21:32.018 4a50 Delete type=2 #64
+2024/01/07-23:21:32.018 4a50 Delete type=2 #68
+2024/01/07-23:21:32.018 4a50 Delete type=0 #69
+2024/01/07-23:21:32.018 4a50 Delete type=2 #71
+2024/01/07-23:21:32.018 4a50 Delete type=0 #73
+2024/01/07-23:21:32.018 4a50 Delete type=2 #75
+2024/01/07-23:21:32.018 4a50 Delete type=2 #82
+2024/01/07-23:21:32.019 4a50 Delete type=0 #83
+2024/01/07-23:21:32.019 4a50 Delete type=2 #85
+2024/01/07-23:21:32.019 4a50 Delete type=2 #89
+2024/01/07-23:21:32.019 4a50 Delete type=0 #90
+2024/01/07-23:21:32.019 4a50 Delete type=2 #92
+2024/01/07-23:21:32.019 4a50 Delete type=0 #94
+2024/01/07-23:21:32.019 4a50 Delete type=2 #96
+2024/01/07-23:21:32.019 4a50 Delete type=2 #103
+2024/01/07-23:21:32.019 4a50 Delete type=0 #104
+2024/01/07-23:21:32.019 4a50 Delete type=2 #106
+2024/01/07-23:21:32.019 4a50 Delete type=2 #110
+2024/01/07-23:21:32.019 4a50 Delete type=0 #111
+2024/01/07-23:21:32.019 4a50 Delete type=2 #113
+2024/01/07-23:21:32.019 4a50 Delete type=2 #117
+2024/01/07-23:21:32.019 4a50 Delete type=0 #119
+2024/01/07-23:21:32.019 4a50 Delete type=2 #121
+2024/01/07-23:21:32.019 4a50 Delete type=2 #131
+2024/01/07-23:21:32.019 4a50 Delete type=0 #132
+2024/01/07-23:21:32.019 4a50 Delete type=2 #134
+2024/01/07-23:21:32.019 4a50 Delete type=2 #147
+2024/01/07-23:21:32.019 4a50 Delete type=0 #148
+2024/01/07-23:21:32.020 4a50 Delete type=2 #150
+2024/01/07-23:21:32.020 4a50 Delete type=2 #158
+2024/01/07-23:21:32.020 4a50 Delete type=0 #160
+2024/01/07-23:21:32.020 4a50 Delete type=2 #161
+2024/01/07-23:21:32.020 4a50 Delete type=2 #192
+2024/01/07-23:21:32.020 4a50 Delete type=0 #193
+2024/01/07-23:21:32.020 4a50 Delete type=2 #195
+2024/01/07-23:21:32.020 4a50 Delete type=0 #197
+2024/01/07-23:21:32.020 4a50 Delete type=2 #199
+2024/01/07-23:21:32.020 4a50 Delete type=2 #222
+2024/01/07-23:21:32.020 4a50 Delete type=0 #224
+2024/01/07-23:21:32.020 4a50 Delete type=2 #226
+2024/01/07-23:21:32.020 4a50 Delete type=2 #230
+2024/01/07-23:21:32.020 4a50 Delete type=0 #232
+2024/01/07-23:21:32.020 4a50 Delete type=2 #234
+2024/01/07-23:21:32.020 4a50 Delete type=2 #254
+2024/01/07-23:21:32.020 4a50 Delete type=0 #256
+2024/01/07-23:21:32.020 4a50 Delete type=2 #258
+2024/01/07-23:21:32.020 4a50 Delete type=2 #318
+2024/01/07-23:21:32.020 4a50 Delete type=0 #320
+2024/01/07-23:21:32.020 4a50 Delete type=2 #322
+2024/01/07-23:21:32.020 4a50 Delete type=0 #324
+2024/01/07-23:21:32.021 4a50 Delete type=2 #326
+2024/01/07-23:21:32.021 4a50 Delete type=2 #334
+2024/01/07-23:21:32.021 4a50 Delete type=0 #336
+2024/01/07-23:21:32.021 4a50 Delete type=2 #338
+2024/01/07-23:21:32.021 4a50 Delete type=2 #350
+2024/01/07-23:21:32.021 4a50 Delete type=0 #352
+2024/01/07-23:21:32.021 4a50 Delete type=2 #354
+2024/01/07-23:21:32.021 4a50 Delete type=2 #358
+2024/01/07-23:21:32.021 4a50 Delete type=0 #360
+2024/01/07-23:21:32.021 4a50 Delete type=2 #362
+2024/01/07-23:21:32.021 4a50 Delete type=2 #374
+2024/01/07-23:21:32.021 4a50 Delete type=0 #376
+2024/01/07-23:21:32.021 4a50 Delete type=2 #378
+2024/01/07-23:21:32.021 4a50 Delete type=2 #390
+2024/01/07-23:21:32.021 4a50 Delete type=0 #392
+2024/01/07-23:21:32.021 4a50 Delete type=2 #394
+2024/01/07-23:21:32.021 4a50 Delete type=0 #396
+2024/01/07-23:21:32.021 4a50 Delete type=2 #398
+2024/01/07-23:21:32.021 4a50 Delete type=0 #400
+2024/01/07-23:21:32.021 4a50 Delete type=2 #402
+2024/01/07-23:21:32.022 4a50 Delete type=2 #406
+2024/01/07-23:21:32.072 2470 Level-0 table #413: started
+2024/01/07-23:21:32.079 2470 Level-0 table #413: 640 bytes OK
+2024/01/07-23:21:32.081 2470 Delete type=0 #408
+2024/01/07-23:21:32.081 2470 Manual compaction at level-0 from '\x00p\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00q\x00\x00\x00' @ 0 : 0; will stop at '\x00p\x00\x00\x05' @ 2263 : 1
+2024/01/07-23:21:32.081 2470 Compacting 1@0 + 1@1 files
+2024/01/07-23:21:32.084 2470 Generated table #414@0: 14 keys, 1025 bytes
+2024/01/07-23:21:32.084 2470 Compacted 1@0 + 1@1 files => 1025 bytes
+2024/01/07-23:21:32.085 2470 compacted to: files[ 0 1 1 0 0 0 0 ]
+2024/01/07-23:21:32.085 2470 Delete type=2 #413
+2024/01/07-23:21:32.086 2470 Manual compaction at level-0 from '\x00p\x00\x00\x05' @ 2263 : 1 .. '\x00q\x00\x00\x00' @ 0 : 0; will stop at (end)

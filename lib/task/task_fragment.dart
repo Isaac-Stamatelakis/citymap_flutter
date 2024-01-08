@@ -83,38 +83,26 @@ class _TaskFragmentState extends State<TaskFragment> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox( 
-              width: deviceSize.width*0.3,
-              height: 40,
-              child: ElevatedButton(
-                onPressed: () {_driverButtonPress();},
-                child: const Text('Driver Sheet')
-              ),
+            const SizedBox(height: 20),
+            SquareGradientButtonSizeable(
+              onPress: (BuildContext){_dailyButtonPress();}, 
+              text: "Daily Sheet", 
+              colors: [Colors.blue, Colors.blue.shade300], 
+              size: const Size(200,80)
             ),
-            SizedBox(
-              width: deviceSize.width*0.025,
+            const SizedBox(
+              width:40
             ),
-            SizedBox(
-              width: deviceSize.width*0.3,
-              height: 40,
-              child: ElevatedButton(
-                onPressed: () {_dailyButtonPress();},
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Daily Sheet'),
-                    SizedBox(
-                      width: deviceSize.width*0.005,
-                    ),
-                    const Icon(Icons.edit)
-                  ],
-                ) 
-              ),
-            ),
+            SquareGradientButtonSizeable(
+              onPress: (BuildContext){_driverButtonPress();}, 
+              text: "Driver Sheet", 
+              colors: [Colors.blue, Colors.blue.shade300], 
+              size: const Size(200,80)
+            )
           ]
         ),
         const SizedBox(
-          height: 20,
+          height: 40,
         ),
         Container(
           decoration: BoxDecoration(
