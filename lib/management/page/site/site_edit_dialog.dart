@@ -55,7 +55,7 @@ class _SiteEditPageState extends State<_SiteEditPage> {
       children: [
         Column(
           children: [
-            _SiteTaskEditList(user: widget.manager, siteTasks: widget.managerSiteTasks)
+            _SiteTaskEditList(user: widget.manager, list: widget.managerSiteTasks)
           ],
         ),
         Positioned(
@@ -94,7 +94,9 @@ class _SiteEditPageState extends State<_SiteEditPage> {
 }
 
 class _SiteTaskEditList extends AbstractSiteTaskDisplayList<Manager> {
-  const _SiteTaskEditList({required super.siteTasks, required super.user});
+  const _SiteTaskEditList({required super.user, required super.list});
+
+
   @override
   State<StatefulWidget> createState() => _SiteTaskEditListState();
 
@@ -115,7 +117,7 @@ class _SiteTaskEditListState extends AbstractSiteTaskDisplayListState<Manager> {
 
   void _deleteSite(SiteTask? siteTask, BuildContext context) {
     setState(() {
-      widget.siteTasks!.remove(siteTask);
+      widget.list!.remove(siteTask);
     });
     SiteTaskUploader().delete(siteTask);
   }
@@ -126,14 +128,14 @@ class _SiteTaskEditListState extends AbstractSiteTaskDisplayListState<Manager> {
       builder: (BuildContext context) {
         return SiteEditDialog(
           siteTask: element, 
-          manager: widget.user,
+          manager: widget.user!,
         );
       }
     );
     // Change type. Probably a better way of doing this
     if (element.siteType == "A") {
       element = ASiteTask(
-        widget.user.id, element.bedAmount, element.completed, element.completedBy, element.description, element.number, element.primaryLocation, element.siteType, element.squareMeters, element.areaID, element.dbID
+        widget.user!.id, element.bedAmount, element.completed, element.completedBy, element.description, element.number, element.primaryLocation, element.siteType, element.squareMeters, element.areaID, element.dbID
       );
     } else if (element.siteType == "B") {
       element = BSiteTask(element.bedAmount, element.completed, element.completedBy, element.description, element.number, element.primaryLocation, element.siteType, element.squareMeters, element.areaID, element.dbID

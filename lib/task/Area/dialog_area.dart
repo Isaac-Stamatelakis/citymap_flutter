@@ -73,7 +73,7 @@ class _AreaDialogState extends State<AreaDialog> {
             SizedBox(
               height: MediaQuery.of(context).size.height/2,
               width: GlobalHelper.getPreferredWidth(context),
-              child:  SiteTaskDisplayList(siteTasks:widget.siteTasks, user: widget.worker)
+              child:  SiteTaskDisplayList(list:widget.siteTasks, user: widget.worker)
             )
           ],
         )

@@ -3,6 +3,7 @@ import 'package:city_map/consts/loader.dart';
 import 'package:city_map/management/manager.dart';
 import 'package:city_map/management/page/area/area_edit_dialog.dart';
 import 'package:city_map/management/page/site/site_edit_dialog.dart';
+import 'package:city_map/management/page/workergroup/manage_workergroup_page.dart';
 import 'package:city_map/worker/worker.dart';
 import 'package:flutter/material.dart';
 
@@ -62,7 +63,7 @@ class _ManagementFragment extends StatelessWidget {
             children: [
               SquareGradientButtonSizeable(
                 onPress: _navigateManageWorkerGroups,
-                text: "Manager WorkerGroups", 
+                text: "Manage Worker Groups", 
                 colors: [Colors.red,Colors.red.shade300],
                 size: const Size(200,100)
               ),
@@ -104,9 +105,16 @@ class _ManagementFragment extends StatelessWidget {
   }
 
   void _navigateManageWorkerGroups(BuildContext context) {
-
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => 
+      ManageWorkerGroupPageLoader(
+          manager: manager,
+        ) 
+      )
+    );
   }
-
+  
   void _navigateManageAreas(BuildContext context) async {
     Navigator.push(
       context,

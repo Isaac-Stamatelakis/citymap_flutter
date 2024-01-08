@@ -90,6 +90,7 @@ class _State extends State<MainScaffold> {
       displayTitle = title; 
     });
   }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

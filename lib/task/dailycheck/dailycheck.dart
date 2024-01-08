@@ -30,14 +30,15 @@ class DailyCheckUploader {
     'dailyChecks' : dailyCheck.checks
   };
  } 
-static Future<void> upload(DailyCheckContainer check) async {
+static Future<String?> upload(DailyCheckContainer check) async {
   if (check.dbID != null) {
-    return;
+    return null;
   }
   Map<String, dynamic> json = toJson(check);
   DocumentReference reference = await FirebaseFirestore.instance.collection("DailyChecks").add(json);
   Logger().i("Added driversheet : ${reference.id}");
   check.dbID = reference.id;
+  return reference.id;
 }
 
 static Future<void> update(DailyCheckContainer check) async {
@@ -45,9 +46,7 @@ static Future<void> update(DailyCheckContainer check) async {
   await FirebaseFirestore.instance.collection("DailyChecks").doc(check.dbID).update(json);
 }
 
- static DailyCheckContainer initChecks() {
-  return DailyCheckContainer(checks: _DailyCheckFactory.initCheckMap(), dbID: null);
- }
+ 
 }
 
 enum _DailyCheck {
@@ -87,4 +86,7 @@ class DailyCheckContainerFactory {
     }
     return DailyCheckContainer(checks: checkListJson, dbID: snapshot.id);
   }
+  static DailyCheckContainer initChecks() {
+    return DailyCheckContainer(checks: _DailyCheckFactory.initCheckMap(), dbID: null);
+ }
 }

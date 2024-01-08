@@ -41,7 +41,7 @@ class MapFragmentLoader extends SizedWidgetLoader {
   @override
   Future getFuture() async {
     Worker worker = await WorkerDatabaseHelper(workerID: workerID!).fromDatabase();
-    WorkerGroup workerGroup = await WorkerGroupDatabaseHelper(id: worker.groupID).fromDatabase();
+    WorkerGroup workerGroup = await WorkerGroupDatabaseHelper(id: worker.groupID!).fromDatabase();
     Manager manager = await ManagerDatabaseRetriever(id:workerGroup.managerID!).fromDatabase();
     
     List<SiteTask> unassignedSiteTasks = [];

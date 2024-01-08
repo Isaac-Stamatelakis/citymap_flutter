@@ -30,6 +30,13 @@ class DriverSheet {
    set dbID(String? value) => this._dbID = value;
   
 
+  
+}
+
+class DriverSheetFactory {
+  static DriverSheet initSheet() {
+    return DriverSheet(0, 0, null, _DriverCheckFactory.getChecks(), null);
+  }
   static DriverSheet fromDocument(DocumentSnapshot documentSnapshot) {
     var snapshotData = documentSnapshot.data() as Map<String, dynamic>;
     List<dynamic> dynamicList = snapshotData['vehicleChecks'];
@@ -46,7 +53,7 @@ class DriverSheetDatabaseHelper extends DatabaseHelper {
   DriverSheetDatabaseHelper(this.driversheetID);
   @override
   DriverSheet? fromDocument(DocumentSnapshot<Object?> snapshot) {
-    return DriverSheet.fromDocument(snapshot);
+    return DriverSheetFactory.fromDocument(snapshot);
   }
 
   @override
@@ -63,24 +70,21 @@ class DriverSheetUploader{
     'vehicleChecks' : driverSheet.checks
   };
  } 
-static Future<void> upload(DriverSheet driverSheet) async {
+static Future<String?> upload(DriverSheet driverSheet) async {
   if (driverSheet.dbID != null) {
-    return;
+    return null;
   }
   Map<String, dynamic> json = toJson(driverSheet);
   DocumentReference reference = await FirebaseFirestore.instance.collection("DriverSheets").add(json);
   Logger().i("Added driversheet : ${reference.id}");
   driverSheet.dbID = reference.id;
+  return reference.id;
 }
 
 static Future<void> update(DriverSheet driverSheet) async {
   Map<String, dynamic> json = toJson(driverSheet);
   await FirebaseFirestore.instance.collection("DriverSheets").doc(driverSheet.dbID).update(json);
 }
-
- static DriverSheet initSheet() {
-  return DriverSheet(0, 0, null, _DriverCheckFactory.getChecks(), null);
- }
 }
 
 enum _DriverCheck {
@@ -129,4 +133,5 @@ class _DriverCheckFactory {
     }
     return list;
   }
+  
 }

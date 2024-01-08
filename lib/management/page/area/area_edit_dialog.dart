@@ -21,7 +21,7 @@ class EditAreaListLoader extends WidgetLoader {
   @override
   Widget generateContent(AsyncSnapshot snapshot) {
     return MainScaffold(
-      content:_EditAreaFragment(manager: manager, areas: snapshot.data),
+      content: _EditAreaFragment(manager: manager, areas: snapshot.data),
       title: "Edit Areas", 
       initalPage: MainPage.Management, 
       userID: manager.workerID
@@ -51,7 +51,7 @@ class _EditAreaFragmentState extends State<_EditAreaFragment> {
       children: [
         Column(
           children: [
-            _EditAreaList(areas:widget.areas, user: widget.manager)
+            Expanded(child: _EditAreaList(list:widget.areas, user: widget.manager)) 
           ],
         ),
         Positioned(
@@ -89,7 +89,7 @@ class _EditAreaFragmentState extends State<_EditAreaFragment> {
 }
 
 class _EditAreaList extends AbstractAreaDisplayList<Manager> {
-  const _EditAreaList({required super.user, required super.areas});
+  const _EditAreaList({required super.user, required super.list});
   @override
   State<StatefulWidget> createState() => _EditAreaListState();
 }
@@ -112,7 +112,7 @@ class _EditAreaListState extends AbstractAreaDisplayListState<Manager> implement
       return;
     }
     setState(() {
-      widget.areas!.remove(area);
+      widget.list!.remove(area);
     });
     AreaUploader().delete(area);
 
@@ -208,7 +208,7 @@ class _EditAreaDialog extends State<EditAreaDialog> {
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d+\.?\d{0,2}$'),
+                            RegExp(r'^-?[0-9]*\.?[0-9]*$'),
                         ),
                       ],
                       decoration: const InputDecoration(
@@ -229,7 +229,7 @@ class _EditAreaDialog extends State<EditAreaDialog> {
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d+\.?\d{0,2}$'),
+                            RegExp(r'^-?[0-9]*\.?[0-9]*$'),
                         ),
                       ],
                       decoration: const InputDecoration(

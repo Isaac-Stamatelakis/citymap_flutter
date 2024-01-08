@@ -80,7 +80,7 @@ class _SiteEditDialogState extends State<SiteEditDialog> {
                 ),
                 
                 const SizedBox(height: 20),
-                _CustomTextField(
+                CustomTextField(
                   controller: TextEditingController(
                     text: widget.siteTask.number.toString()
                   ), 
@@ -91,7 +91,7 @@ class _SiteEditDialogState extends State<SiteEditDialog> {
                   },
                 ),
                 const SizedBox(height: 20),
-                _CustomTextField(
+                CustomTextField(
                   controller: TextEditingController(
                     text: widget.siteTask.description
                   ), 
@@ -102,7 +102,7 @@ class _SiteEditDialogState extends State<SiteEditDialog> {
                   },
                 ),
                 const SizedBox(height: 20),
-                _CustomTextField(
+                CustomTextField(
                   controller: TextEditingController(
                     text: widget.siteTask.squareMeters.toString()
                   ), 
@@ -113,7 +113,7 @@ class _SiteEditDialogState extends State<SiteEditDialog> {
                   },
                 ),
                 const SizedBox(height: 20),
-                _CustomTextField(
+                CustomTextField(
                   controller: TextEditingController(
                     text: widget.siteTask.bedAmount.toString()
                   ), 
@@ -126,7 +126,7 @@ class _SiteEditDialogState extends State<SiteEditDialog> {
                 Row(
                 children: [
                   Expanded(
-                    child: _CustomTextField(
+                    child: CustomTextField(
                       controller: TextEditingController(
                         text: widget.siteTask.primaryLocation.latitude.toString()
                       ), 
@@ -139,7 +139,7 @@ class _SiteEditDialogState extends State<SiteEditDialog> {
                   ),
                   const SizedBox(width: 20),
                   Expanded(
-                    child: _CustomTextField(
+                    child: CustomTextField(
                       controller: TextEditingController(
                         text: widget.siteTask.primaryLocation.latitude.toString()
                       ), 
@@ -255,13 +255,13 @@ class _SiteTypeDropdownSelectorState extends AbstractDropDownSelectorState<_Site
   }
 
 }
-class _CustomTextField extends StatelessWidget {
+class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final List<FilteringTextInputFormatter> inputFormatters;
   final String labelText;
   final Function(String) onChange;
 
-  const _CustomTextField({required this.controller, required this.inputFormatters, required this.labelText, required this.onChange});
+  const CustomTextField({super.key, required this.controller, required this.inputFormatters, required this.labelText, required this.onChange});
 
   @override
   Widget build(BuildContext context) {

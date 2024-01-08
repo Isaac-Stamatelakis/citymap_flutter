@@ -36,7 +36,10 @@ class TaskFragmentLoader extends SizedWidgetLoader {
   @override
   Future getFuture() async {
     Worker worker = await WorkerDatabaseHelper(workerID: workerID).fromDatabase();
-    WorkerGroup workerGroup = await WorkerGroupDatabaseHelper(id: worker.groupID).fromDatabase();
+    WorkerGroup? workerGroup;
+    if (worker.groupID != null && worker.groupID!.isNotEmpty) {
+      workerGroup = await WorkerGroupDatabaseHelper(id: worker.groupID!).fromDatabase();
+    }
     return {
       'worker' : worker,
       'worker_group' : workerGroup
@@ -46,8 +49,8 @@ class TaskFragmentLoader extends SizedWidgetLoader {
 
 
 class TaskFragment extends StatefulWidget {
-  final Worker worker;
-  final WorkerGroup workerGroup;
+  final Worker? worker;
+  final WorkerGroup? workerGroup;
   const TaskFragment ({super.key, required this.worker, required this.workerGroup});
 
   @override
@@ -59,6 +62,16 @@ class _TaskFragmentState extends State<TaskFragment> {
   late _TaskState selectedState = _TaskState.AssignedSites;
   @override
   Widget build(BuildContext context) {
+    if (widget.workerGroup == null) {
+      return const Center(
+        child: Text(
+          "You are not in a group. To resolve this, please contact your manager.",
+          style: TextStyle(
+            fontSize: 30
+          ),
+        )
+      );
+    }
     Size deviceSize = GlobalHelper.getDeviceSize(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -135,14 +148,14 @@ class _TaskFragmentState extends State<TaskFragment> {
   Widget _getTaskContent() {
     switch (selectedState) {
       case _TaskState.AssignedSites:
-        return SiteTaskDisplay(ids: widget.workerGroup.siteTaskIDs, worker: widget.worker);
+        return SiteTaskDisplay(ids: widget.workerGroup!.siteTaskIDs, worker: widget.worker!);
       case _TaskState.AssignedAreas:
-        return NeighborhoodDisplay(ids: widget.workerGroup.areaIDs, worker: widget.worker);
+        return NeighborhoodDisplay(ids: widget.workerGroup!.areaIDs, worker: widget.worker!);
     }
   }
   
   void _driverButtonPress() async {
-    DriverSheet driverSheet = await DriverSheetDatabaseHelper(widget.workerGroup.driverSheetID!).fromDatabase();
+    DriverSheet driverSheet = await DriverSheetDatabaseHelper(widget.workerGroup!.driverSheetID!).fromDatabase();
     _showDriverSheet(driverSheet);
   }
   void _showDriverSheet(DriverSheet driverSheet) async {
@@ -156,7 +169,7 @@ class _TaskFragmentState extends State<TaskFragment> {
 
   }
   void _dailyButtonPress() async {
-    DailyCheckContainer dailyCheckContainer = await DailyCheckContainerRetriver(dbID: widget.workerGroup.dailySheetID).fromDatabase();
+    DailyCheckContainer dailyCheckContainer = await DailyCheckContainerRetriver(dbID: widget.workerGroup!.dailySheetID).fromDatabase();
     _showDailyCheck(dailyCheckContainer);
   }
 
@@ -227,7 +240,7 @@ class NeighborhoodDisplay extends TaskDisplay {
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
             } else {
-              return BaseAreaDisplayList(areas:snapshot.data?.cast<Area>(), user: worker);
+              return BaseAreaDisplayList(list:snapshot.data?.cast<Area>(), user: worker);
             }
           }
       );
@@ -250,7 +263,7 @@ class SiteTaskDisplay extends TaskDisplay {
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
             } else {
-              return Expanded(child: SiteTaskDisplayList(siteTasks: snapshot.data?.cast<SiteTask>(), user: worker));
+              return Expanded(child: SiteTaskDisplayList(list: snapshot.data?.cast<SiteTask>(), user: worker));
             }
           }
       );

@@ -1,11 +1,15 @@
 
 
+import 'dart:js_interop_unsafe';
+
 import 'package:city_map/consts/colors.dart';
+import 'package:city_map/consts/global_widgets.dart';
 import 'package:city_map/consts/helper.dart';
 import 'package:city_map/main_scaffold.dart';
 import 'package:city_map/map/map_fragment.dart';
 import 'package:city_map/task/Area/Area.dart';
 import 'package:city_map/task/site_task/site_task.dart';
+import 'package:city_map/task/site_task/uploader_site_task.dart';
 import 'package:city_map/worker/worker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -37,16 +41,18 @@ class _SiteTaskListDialogState extends State<SiteTaskListDialog> {
         children: [
           _BaseContent(siteTask: widget.siteTask,),
           _SiteTaskCompleteButton(siteTask: widget.siteTask, callback: completePress),
+          const SizedBox(height: 20),
           _ViewOnMapButton(siteTask: widget.siteTask, worker: widget.worker)
         ],
       ),
     );
   }
 
-  void completePress() {
+  void completePress(BuildContext context) {
     setState(() {
-      
+      widget.siteTask.completed = !widget.siteTask.completed;
     });
+    SiteTaskUploader().update(widget.siteTask);
   }
 }
 
@@ -71,10 +77,11 @@ class _MapSiteDialogState extends State<MapSiteTaskDialog> {
       ),
     );
   }
-  void completePress() {
+  void completePress(BuildContext context) {
     setState(() {
-      
+      widget.siteTask.completed = !widget.siteTask.completed;
     });
+    SiteTaskUploader().update(widget.siteTask);
   }
 }
 
@@ -89,11 +96,8 @@ class _ViewOnMapButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: CustomColors.darkGreen
-        ),
-        onPressed: (){
+      child: SquareGradientButtonSizeable(
+        onPress: (BuildContext context) {
           while (Navigator.of(context).canPop()) {
             Navigator.of(context).pop();
           }
@@ -110,13 +114,10 @@ class _ViewOnMapButton extends StatelessWidget {
               ),
             ),
           );
-        },
-        child: const Text(
-          "View on Map",
-          style: TextStyle(
-            color: CustomColors.antiflashWhite
-          ),
-        ) 
+        }, 
+        text: "View on Map", 
+        colors: [Colors.blue,Colors.blue.shade300], 
+        size: const Size(200,50)
       )
     );
   }
@@ -130,26 +131,33 @@ class _ViewOnMapButton extends StatelessWidget {
 }
 class _SiteTaskCompleteButton extends StatelessWidget {
   final SiteTask siteTask;
-  final Function() callback;
+  final Function(BuildContext) callback;
   const _SiteTaskCompleteButton({required this.siteTask, required this.callback});
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: CustomColors.darkGreen
-        ),
-        onPressed: (){
-          callback();
-        },
-        child: const Text(
-          "Set Complete",
-          style: TextStyle(
-            color: CustomColors.antiflashWhite
-          ),
-        ) 
+      child: SquareGradientButtonSizeable(
+        onPress: callback, 
+        text: _getText(), 
+        colors: _getColors(), 
+        size: const Size(200,50)
       )
     );
+  }
+
+  String _getText() {
+    if (siteTask.completed) {
+      return "Set Not Complete"; 
+    } else {
+      return "Set Complete";
+    }
+  }
+  List<Color> _getColors() {
+    if (siteTask.completed) {
+      return [Colors.red, Colors.red.shade300];
+    } else {
+      return [Colors.green, Colors.green.shade300];
+    }
   }
 }
 

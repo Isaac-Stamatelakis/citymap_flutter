@@ -119,7 +119,7 @@ abstract class AbstractDropDownSelectorState<T> extends State<AbstractDropDownSe
                   Text(
                     optionToString(option),
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 15,
                       color: widget.textColor
                     ),
                   ),
