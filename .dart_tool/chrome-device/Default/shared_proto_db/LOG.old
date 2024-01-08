@@ -1,14 +1,14 @@
-2024/01/07-11:46:18.472 592c Reusing MANIFEST C:\Users\Isaac\AppData\Local\Temp\flutter_tools.ea354850\flutter_tools_chrome_device.c0657c36\Default\shared_proto_db/MANIFEST-000001
-2024/01/07-11:46:18.473 592c Recovering log #23
-2024/01/07-11:46:18.474 592c Reusing old log C:\Users\Isaac\AppData\Local\Temp\flutter_tools.ea354850\flutter_tools_chrome_device.c0657c36\Default\shared_proto_db/000023.log 
-2024/01/07-11:46:18.475 592c Delete type=0 #3
-2024/01/07-11:46:18.475 592c Delete type=0 #4
-2024/01/07-11:46:18.475 592c Delete type=0 #7
-2024/01/07-11:46:18.475 592c Delete type=2 #8
-2024/01/07-11:46:18.475 592c Delete type=0 #10
-2024/01/07-11:46:18.475 592c Delete type=2 #11
-2024/01/07-11:46:18.475 592c Delete type=0 #13
-2024/01/07-11:46:18.475 592c Delete type=2 #14
-2024/01/07-11:46:18.483 592c Delete type=0 #16
-2024/01/07-11:46:18.483 592c Delete type=2 #17
-2024/01/07-11:46:18.483 592c Delete type=0 #19
+2024/01/07-23:03:33.482 4710 Reusing MANIFEST C:\Users\Isaac\AppData\Local\Temp\flutter_tools.94deacc9\flutter_tools_chrome_device.330acd40\Default\shared_proto_db/MANIFEST-000001
+2024/01/07-23:03:33.482 4710 Recovering log #23
+2024/01/07-23:03:33.484 4710 Reusing old log C:\Users\Isaac\AppData\Local\Temp\flutter_tools.94deacc9\flutter_tools_chrome_device.330acd40\Default\shared_proto_db/000023.log 
+2024/01/07-23:03:33.484 4710 Delete type=0 #3
+2024/01/07-23:03:33.484 4710 Delete type=0 #4
+2024/01/07-23:03:33.485 4710 Delete type=0 #7
+2024/01/07-23:03:33.485 4710 Delete type=2 #8
+2024/01/07-23:03:33.485 4710 Delete type=0 #10
+2024/01/07-23:03:33.485 4710 Delete type=2 #11
+2024/01/07-23:03:33.485 4710 Delete type=0 #13
+2024/01/07-23:03:33.485 4710 Delete type=2 #14
+2024/01/07-23:03:33.485 4710 Delete type=0 #16
+2024/01/07-23:03:33.485 4710 Delete type=2 #17
+2024/01/07-23:03:33.485 4710 Delete type=0 #19

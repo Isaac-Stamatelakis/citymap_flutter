@@ -27,67 +27,76 @@ class _DialogContentState extends State<DriverSheetDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: Column(
-        children: [
-          Center(
-            child: AppBar(
-            title: const Text(
-                "Driver Sheet",
-                textAlign: TextAlign.center,
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            Center(
+              child: AppBar(
+              title: const Text(
+                  "Driver Sheet",
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
-          ),
-          _DialogTile("Vehicle: ${widget.driverSheet.vehicleID}" ),
-          TextField(
-            controller: _startController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(
-                RegExp(r'^\d+\.?\d{0,2}$'),
+            getVehicleID(),
+            TextField(
+              controller: _startController,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^\d+\.?\d{0,2}$'),
+                ),
+              ],
+              decoration: const InputDecoration(
+                labelText: 'Start KM',
+                labelStyle: TextStyle(
+                  color: Colors.grey
+                ),
               ),
-            ],
-            decoration: const InputDecoration(
-              labelText: 'Start KM',
-              labelStyle: TextStyle(
-                color: Colors.grey
-              ),
-            ),
-            onChanged: (value) {
-              widget.driverSheet.startKiloMeters = double.parse(value);
-            },
-          ),
-          TextField(
-            controller: _endController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(
-                RegExp(r'^\d+\.?\d{0,2}$'),
-              ),
-            ],
-            decoration: const InputDecoration(
-              labelText: 'End KM',
-              labelStyle: TextStyle(
-                color: Colors.grey
-              ),
-            ),
-            onChanged: (value) {
-              widget.driverSheet.endKiloMeters = double.parse(value);
-            },
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 300.0, // Change as per your requirement
-            width: 300.0, // Change as per your requirement
-            child: ListView.builder(
-              itemCount: widget.driverSheet.checks?.length,
-              itemBuilder: (context, index) {
-                return _ListTile(map: widget.driverSheet.checks?[index]);
+              onChanged: (value) {
+                widget.driverSheet.startKiloMeters = double.parse(value);
               },
+            ),
+            TextField(
+              controller: _endController,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^\d+\.?\d{0,2}$'),
+                ),
+              ],
+              decoration: const InputDecoration(
+                labelText: 'End KM',
+                labelStyle: TextStyle(
+                  color: Colors.grey
+                ),
+              ),
+              onChanged: (value) {
+                widget.driverSheet.endKiloMeters = double.parse(value);
+              },
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: MediaQuery.of(context).size.height, // Change as per your requirement
+              width: GlobalHelper.getPreferredWidth(context), // Change as per your requirement
+              child: ListView.builder(
+                itemCount: widget.driverSheet.checks?.length,
+                itemBuilder: (context, index) {
+                  return _ListTile(map: widget.driverSheet.checks?[index]);
+                },
+              )
             )
-          )
-        ]
+          ]
+        )
       )
     );
+  }
+
+  Widget getVehicleID() {
+    if (widget.driverSheet.vehicleID != null) {
+      return _DialogTile("Vehicle: ${widget.driverSheet.vehicleID}");
+    }
+    return Container();
   }
 }
 

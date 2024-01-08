@@ -22,14 +22,7 @@ class _State extends State<DailyCheckDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       content: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue.shade300, Colors.blue.shade200],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(0),
         child: SingleChildScrollView(
           child: Column(
           children: [
@@ -43,10 +36,10 @@ class _State extends State<DailyCheckDialog> {
             ),
             const SizedBox(height: 20),
             SizedBox(
-              width: 300.0, // Change as per your requirement
+              width: 200, // Change as per your requirement
               height: MediaQuery.of(context).size.height, // Change as per your requirement
               child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
                 itemCount: widget.checkContainer.checks.length,
                   itemBuilder: (context, index) {
                     return _ListTile(map: widget.checkContainer.checks[index]);
@@ -73,7 +66,7 @@ class _ListTileState extends State<_ListTile> {
   Widget build(BuildContext context) {
     return 
       Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             widget.map?['checkName'],
@@ -85,6 +78,7 @@ class _ListTileState extends State<_ListTile> {
               });
             }
           ),
+          const SizedBox(height: 5)
         ],
       );
   }
