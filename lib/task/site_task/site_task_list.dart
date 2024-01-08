@@ -1,56 +1,101 @@
 import 'package:city_map/consts/colors.dart';
+import 'package:city_map/consts/global_list.dart';
+import 'package:city_map/consts/global_widgets.dart';
+import 'package:city_map/consts/helper.dart';
+import 'package:city_map/task/Area/area.dart';
+import 'package:city_map/task/Area/area_list.dart';
 import 'package:city_map/task/site_task/site_task.dart';
 import 'package:city_map/task/site_task/site_task_dialog.dart';
+import 'package:city_map/task/site_task/uploader_site_task.dart';
+import 'package:city_map/task/task_fragment.dart';
+import 'package:city_map/worker/worker.dart';
 import 'package:flutter/material.dart';
 
-class SiteTaskDisplayList extends StatelessWidget {
-  final List<SiteTask>? siteTasks;
-  const SiteTaskDisplayList(this.siteTasks,{super.key});
+abstract class AbstractSiteTaskDisplayList<T> extends AbstractList<T,SiteTask> {
+  const AbstractSiteTaskDisplayList({super.key, required super.user, required super.list});
+}
+
+ class AbstractSiteTaskDisplayListState<T> extends AbstractListState<T,SiteTask> {
   @override
-  Widget build(BuildContext context) {
-    return 
-      Expanded(
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemCount: siteTasks!.length,
-          separatorBuilder: (_,__) => const SizedBox(),
-          itemBuilder: (context,int index) {
-              return TaskContent(siteTasks![index]);
-          } 
-        )
-      );
+  Widget? getTrailing(SiteTask element) {
+    double size = 50;
+    return element.completed 
+    ? Icon(
+        Icons.check, 
+        color: Colors.green,
+        size: size,
+      ) 
+    : Icon(
+        Icons.error_outline, 
+        color: Colors.red,
+        size: size,
+    );
+  }
+
+  @override
+  Widget getListTitleText(SiteTask element) {
+    return Text(  
+      "Site#${element.number.toString()}",
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        color: Colors.white,
+      ),
+    );
+  }
+  
+  @override
+  List<Color> getTileColors() {
+    return [Colors.blue, Colors.blue.shade300];
+  }
+  
+  @override
+  Widget? getListSubTitleText(SiteTask element) {
+    return Text(
+      "Type${element.siteType}\n${element.description}",
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        color: Colors.white70
+      ),
+    );
+  }
+  
+  @override
+  onLongPress(SiteTask element, BuildContext context) {
+    // TODO: implement onLongPress
+    throw UnimplementedError();
+  }
+  
+  @override
+  onPress(SiteTask element, BuildContext context) {
+    // TODO: implement onPress
+    throw UnimplementedError();
   }
 }
 
-class TaskContent extends StatelessWidget {
-  final SiteTask _siteTask;
-  const TaskContent(this._siteTask, {super.key});
+class SiteTaskDisplayList extends AbstractSiteTaskDisplayList<Worker> {
+  const SiteTaskDisplayList({super.key, required super.user, required super.list});
   @override
-  Widget build(BuildContext context) {
-    return
-        Container(
-          color: Colors.brown,
-          child: GestureDetector(
-            child: ListTile(
-              leading: const Icon(Icons.agriculture),
-              title: Text(_siteTask.number.toString()),
-              subtitle: Text("Type${_siteTask.siteType}\n${_siteTask.description}"),
-              trailing: _getTrailingIcon(),
-              onTap: () {
-                showDialog(
-                  context: context, 
-                  builder: (BuildContext context) {
-                    return SiteTaskDialog(_siteTask);
-                  }
-                );
-              }
-          )
-        ),
+  State<StatefulWidget> createState() => _SiteTaskDisplayListState();
+}
+
+class _SiteTaskDisplayListState extends AbstractSiteTaskDisplayListState {
+  @override
+  onLongPress(SiteTask element, BuildContext context) {
+    // Do nothing
+  }
+
+  @override
+  onPress(SiteTask element, BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SiteTaskListDialog(
+          worker: widget.user, siteTask: element,
+        );
+      }
     );
-    
-    
+    setState(() {});
   }
-  Icon _getTrailingIcon() {
-    return _siteTask.completed ? const Icon(Icons.check, color: Colors.green) : const Icon(Icons.error_outline, color: Colors.red);
-  }
+  
+
 }

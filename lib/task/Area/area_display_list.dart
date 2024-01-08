@@ -1,64 +1,81 @@
+import 'package:city_map/consts/global_widgets.dart';
+import 'package:city_map/consts/helper.dart';
+import 'package:city_map/consts/loader.dart';
+import 'package:city_map/management/manager.dart';
 import 'package:city_map/task/Area/area.dart';
-import 'package:city_map/task/Area/area_fragment.dart';
+import 'package:city_map/task/Area/area_list.dart';
+import 'package:city_map/task/Area/dialog_area.dart';
 import 'package:city_map/task/site_task/site_task.dart';
+import 'package:city_map/worker/worker.dart';
 import 'package:flutter/material.dart';
 
-class AreaDisplayList extends StatelessWidget {
-  final List<Area>? _areas;
-  const AreaDisplayList(this._areas,{super.key});
+class AreaListLoaderID extends SizedWidgetLoader {
+  final List<String> areaIDs;
+  final Worker worker;
+  const AreaListLoaderID({super.key, required super.size, required this.areaIDs, required this.worker});
   @override
-  Widget build(BuildContext context) {
-    return 
-      Expanded(
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemCount: _areas!.length,
-          separatorBuilder: (_,__) => const SizedBox(),
-          itemBuilder: (context,int index) {
-              return AreaContent(_areas![index]);
-          } 
-        )
-      );
+  Widget generateContent(AsyncSnapshot snapshot) {
+    return BaseAreaDisplayList(list:snapshot.data, user: worker);
+  }
+
+  @override
+  Future getFuture() {
+    return AreaMultiDatabaseRetriever(areaIDs).fromDatabase();
   }
 }
 
-class AreaContent extends StatelessWidget {
-  final Area _area;
-  const AreaContent(this._area, {super.key});
+class ManagerAreaListLoader extends SizedWidgetLoader {
+  final String workerID;
+  const ManagerAreaListLoader({super.key, required this.workerID}) : super(size: const Size(200,200));
   @override
-  Widget build(BuildContext context) {
-    return
-        Container(
-          color: Colors.brown,
-          child: GestureDetector(
-            child: ListTile(
-              leading: const Icon(Icons.agriculture),
-              title: Text(_area.name.toString()),
-              onTap: () {
-                _toAreaFragment(context);
-              }
-          )
-        ),
+  Widget generateContent(AsyncSnapshot snapshot) {
+    Map<String,dynamic> data = snapshot.data;
+    return Column(
+      children: [
+        Expanded(child: BaseAreaDisplayList(list:data['areas'], user: data['worker'])) 
+      ],
     );
   }
-  void _toAreaFragment(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => FutureBuilder(
-        future: SiteTaskAreaQuery(_area.id).fromDatabase(), 
-        builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              //List<SiteTask>? siteTasks = snapshot.data as List<SiteTask>?;
-              List<SiteTask>? siteTasks = snapshot.data?.cast<SiteTask>();
-              return AreaFragment(_area, siteTasks);
-            }
-          }
-        )
-      )
+
+  @override
+  Future getFuture() async {
+    Worker worker = await WorkerDatabaseHelper(workerID: workerID).fromDatabase();
+    Manager manager = await ManagerDatabaseRetriever(id: worker.managerID!).fromDatabase();
+    List<Area>? areas = await AreaManagerQuery(managerID: manager.id).fromDatabase();
+    return {
+      'worker' : worker,
+      'areas' : areas
+    };
+  }
+}
+
+
+class BaseAreaDisplayList extends AbstractAreaDisplayList<Worker> {
+  const BaseAreaDisplayList({super.key, required super.user, required super.list});
+
+  @override
+  State<StatefulWidget> createState() => _BaseAreaDisplayListState();
+
+}
+
+class _BaseAreaDisplayListState extends AbstractAreaDisplayListState {
+  @override
+  onLongPress(Area element, BuildContext context) {
+     // Do Nothing
+  }
+
+  @override
+  onPress(Area element, BuildContext context) {
+    _navigateAreaDialog(element,widget.user!);
+  }
+
+  void _navigateAreaDialog(Area area, Worker worker) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AreaDialogLoader(area: area, worker: worker);
+      }
     );
   }
+
 }

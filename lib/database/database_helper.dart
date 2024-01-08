@@ -25,15 +25,15 @@ abstract class DatabaseHelper {
 
 abstract class DatabaseRetriever extends DatabaseHelper {
   final String id;
-  DatabaseRetriever(this.id);
+  DatabaseRetriever({required this.id});
   
 }
 
-abstract class MultiDatabaseRetriever {
+abstract class MultiDatabaseRetriever<T> {
   final List<String>? _ids;
   MultiDatabaseRetriever(this._ids);
-  Future<List<dynamic>> fromDatabase() async {
-    List<dynamic> retrieved = [];
+  Future<List<T>> fromDatabase() async {
+    List<T> retrieved = [];
     for (String id in _ids!) {
       retrieved.add(await getRetriever(id).fromDatabase());
     }
@@ -42,10 +42,10 @@ abstract class MultiDatabaseRetriever {
   DatabaseRetriever getRetriever(String id);
 }
 
-abstract class DatabaseQuery {
-  Future<List<dynamic>?> fromDatabase() async {
+abstract class DatabaseQuery<T> {
+  Future<List<T>?> fromDatabase() async {
     try {
-      List<dynamic> queryResults = [];
+      List<T> queryResults = [];
       QuerySnapshot querySnapshot = await getQuery().get();
       for (QueryDocumentSnapshot snapshot in querySnapshot.docs) {
         queryResults.add(fromDocument(snapshot));
@@ -59,5 +59,12 @@ abstract class DatabaseQuery {
   dynamic fromDocument(DocumentSnapshot snapshot);
 
   dynamic getQuery();
+}
+
+abstract class IDBManager<T> {
+  Future<String?> upload(T? value);
+  Future<void> update(T? value);
+  Future<void> delete(T? value);
+  Map<String,dynamic> toJson(T? value);
 }
 

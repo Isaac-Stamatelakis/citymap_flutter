@@ -3,9 +3,14 @@ import 'dart:math';
 
 import 'package:city_map/database/database_helper.dart';
 import 'package:city_map/consts/global_constants.dart';
+import 'package:city_map/task/Area/area.dart';
+import 'package:city_map/task/site_task/site_task_dialog.dart';
 import 'package:city_map/task/task.dart';
+import 'package:city_map/worker/worker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 /// Represents a Site
 class SiteTask implements Task {
@@ -18,8 +23,8 @@ class SiteTask implements Task {
   GeoPoint _primaryLocation; get primaryLocation => this._primaryLocation; set primaryLocation(value) => this._primaryLocation = value;
   String _siteType; String get siteType => this._siteType; set siteType(String value) => this._siteType = value;
   double _squareMeters; double get squareMeters => this._squareMeters; set squareMeters(double value) => this._squareMeters = value;
-  String _dbID; String get dbID => this._dbID; set dbID(String value) => this._dbID = value;
-   String _areaID; set areaID(String value) => this._areaID = value;  String get areaID => this._areaID; 
+  String? _dbID; String? get dbID => this._dbID; set dbID(String? value) => this._dbID = value;
+  String _areaID; set areaID(String value) => this._areaID = value;  String get areaID => this._areaID; 
 }
 /// ASiteTasks have a managerID which overrides the manager of the areaID
 class ASiteTask extends SiteTask {
@@ -48,6 +53,7 @@ class SiteTaskFactory {
         snapshotData['area'], 
         snapshot.id
       );
+
     } else if (siteType == "B") {
       return BSiteTask(
         snapshotData['bedAmount'], 
@@ -69,7 +75,7 @@ class SiteTaskFactory {
 }
 /// Retrieves SiteTask with given id
 class SiteTaskDatabaseRetriever extends DatabaseRetriever {
-  SiteTaskDatabaseRetriever(super.id);
+  SiteTaskDatabaseRetriever({required super.id});
   @override
   SiteTask? fromDocument(DocumentSnapshot<Object?> snapshot) {
     return SiteTaskFactory.fromDocument(snapshot);
@@ -86,15 +92,14 @@ class SiteTaskMultiRetriever extends MultiDatabaseRetriever {
   
   @override
   DatabaseRetriever getRetriever(String id) {
-    return SiteTaskDatabaseRetriever(id);
+    return SiteTaskDatabaseRetriever(id:id);
   }
 }
 
-/// Retrieves areas with given _areaID
-class SiteTaskAreaQuery extends DatabaseQuery {
-  final String _areaID;
-
-  SiteTaskAreaQuery(this._areaID);
+/// Retrieves siteTask with given _areaID
+class SiteTaskAreaQuery extends DatabaseQuery<SiteTask> {
+  final String areaID;
+  SiteTaskAreaQuery(this.areaID);
   @override
   fromDocument(DocumentSnapshot<Object?> snapshot) {
     return SiteTaskFactory.fromDocument(snapshot);
@@ -102,8 +107,94 @@ class SiteTaskAreaQuery extends DatabaseQuery {
 
   @override
   getQuery() {
-    return FirebaseFirestore.instance.collection("Sites").where("area",isEqualTo:_areaID);
+    return FirebaseFirestore.instance.collection("Sites").where("area",isEqualTo:areaID);
+  }
+}
+
+
+class SiteTaskManagerQuery {
+  final String? managerID;
+  SiteTaskManagerQuery({required this.managerID});
+  Future<List<SiteTask>> retrieve() async{
+    List<Area>? areas = await AreaManagerQuery(managerID: managerID!).fromDatabase();
+    List<SiteTask> siteTasks = [];
+    for (Area area in areas!) {
+      List<SiteTask>? newTasks = await SiteTaskAreaQuery(area.id!).fromDatabase();
+      siteTasks.addAll(newTasks!);
+    }
+    List<SiteTask>? newTasks = await ASiteTaskManagerQuery(managerID: managerID!).fromDatabase();
+    for (SiteTask site in newTasks!) {
+      bool contained = false;
+      for (SiteTask currentSite in siteTasks) {
+        if (site.number == currentSite.number && site.description == currentSite.description && site.siteType == currentSite.siteType) {
+          contained = true;
+        }
+      }
+      if (!contained) {
+        siteTasks.add(site);
+      }
+    }
+    return siteTasks;
+  }
+}
+
+class ASiteTaskManagerQuery extends DatabaseQuery<SiteTask> {
+  final String managerID;
+
+  ASiteTaskManagerQuery({required this.managerID});
+  @override
+  fromDocument(DocumentSnapshot<Object?> snapshot) {
+    return SiteTaskFactory.fromDocument(snapshot);
   }
 
+  @override
+  getQuery() {
+    return FirebaseFirestore.instance.collection("Sites").where("manager_id",isEqualTo: managerID);
+  }
+
+}
+
+class SiteTaskMarkerFactory {
+  static Marker generateMarker(SiteTask siteTask,BuildContext context,bool assigned,Map<String,BitmapDescriptor> bitmaps,Function callback) {
+    BitmapDescriptor? customIcon;
+    if (siteTask.completed) {
+      customIcon = bitmaps['assets/marker_completed.png'];
+    } else {
+      if (assigned) {
+        customIcon = bitmaps['assets/marker_assigned.png'];
+      } else {
+        customIcon = bitmaps['assets/marker_not_completed.png'];
+      }
+    }
+    GeoPoint geoPoint = siteTask.primaryLocation;
+    return Marker(
+      markerId: MarkerId(siteTask.number.toString()),
+      position: LatLng(geoPoint.latitude,geoPoint.longitude),
+      infoWindow: InfoWindow(
+        title: siteTask.description,
+      ),
+      icon: customIcon!,
+      onTap: () {
+        showDialog(
+          context: context, 
+          builder: (BuildContext context) {
+            return MapSiteTaskDialog(siteTask:siteTask, worker: null);
+          }
+        );
+      }
+    );
+    
+  }
+  
+  static Future<Map<String,BitmapDescriptor>> buildBitMaps(List<String> files, double size) async {
+    Size vectorSize = Size(size,size*786/512);
+    Map<String, BitmapDescriptor> bitmaps = {};
+    for (String file in files) {
+      await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: vectorSize),file).then((value) {
+          bitmaps[file] = value;
+        });
+    }
+    return bitmaps;
+  }
 }
 
